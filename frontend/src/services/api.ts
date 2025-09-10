@@ -132,4 +132,37 @@ export const projectsApi = {
   },
 };
 
+// Notifications API
+export const notificationsApi = {
+  async getNotifications(): Promise<{ notifications: any[] }> {
+    const response = await api.get('/api/notifications');
+    return response.data;
+  },
+
+  async getUnreadCount(): Promise<{ unreadCount: number }> {
+    const response = await api.get('/api/notifications/unread-count');
+    return response.data;
+  },
+
+  async markAsRead(notificationId: string): Promise<{ message: string; notification: Notification }> {
+    const response = await api.put(`/api/notifications/${notificationId}/read`);
+    return response.data;
+  },
+
+  async markAllAsRead(): Promise<{ message: string }> {
+    const response = await api.put('/api/notifications/mark-all-read');
+    return response.data;
+  },
+
+  async deleteNotification(notificationId: string): Promise<{ message: string }> {
+    const response = await api.delete(`/api/notifications/${notificationId}`);
+    return response.data;
+  },
+
+  async clearAllNotifications(): Promise<{ message: string }> {
+    const response = await api.delete('/api/notifications');
+    return response.data;
+  },
+};
+
 export default api;

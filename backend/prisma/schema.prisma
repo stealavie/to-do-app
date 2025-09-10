@@ -19,6 +19,7 @@ model User {
   // Relations
   memberships    GroupMembership[]
   assignedProjects Project[]
+  notifications  Notification[]
 }
 
 model LearningGroup {
@@ -62,8 +63,39 @@ model Project {
   assignedUser User?    @relation(fields: [assignedTo], references: [id], onDelete: SetNull)
 }
 
+// Notification model for tracking user notifications
+model Notification {
+  id        String   @id @default(cuid())
+  type      NotificationType
+  title     String
+  message   String
+  isRead    Boolean  @default(false) @map("is_read")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  userId    String @map("user_id")
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Optional references to related entities
+  projectId String? @map("project_id")
+  groupId   String? @map("group_id")
+  
+  // Additional metadata as JSON
+  metadata  Json?
+
+  @@index([userId, createdAt])
+  @@index([userId, isRead])
+}
+
 enum Role {
   OWNER
   ADMIN
   MEMBER
+}
+
+enum NotificationType {
+  TASK_ASSIGNED
+  DEADLINE_APPROACHING
+  GROUP_INVITATION
+  PROJECT_UPDATED
 }
