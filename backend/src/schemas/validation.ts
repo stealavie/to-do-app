@@ -31,7 +31,25 @@ export const inviteUserSchema = z.object({
 export const createProjectSchema = z.object({
   title: z.string().min(1, 'Project title is required').max(200, 'Project title must be less than 200 characters'),
   description: z.string().optional(),
-  dueDate: z.string().datetime().optional()
+  dueDate: z.string().optional().transform((val) => {
+    if (!val) return undefined;
+    // Handle both date strings (YYYY-MM-DD) and datetime strings
+    if (val.includes('T')) {
+      // Already a datetime string, validate it
+      return z.string().datetime().parse(val);
+    } else {
+      // Date string, convert to datetime (end of day)
+      try {
+        const date = new Date(val + 'T23:59:59.999Z');
+        if (isNaN(date.getTime())) {
+          throw new Error('Invalid date');
+        }
+        return date.toISOString();
+      } catch {
+        throw new Error('Invalid date format');
+      }
+    }
+  })
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

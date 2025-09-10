@@ -53,12 +53,8 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);
 
-// Projects routes are nested under groups
-app.use('/api/groups/:groupId/projects', (req, res, next) => {
-  // Pass groupId from params to the projects router
-  req.params.groupId = req.params.groupId;
-  next();
-}, projectRoutes);
+// Projects routes are nested under groups - using param merging
+app.use('/api/groups/:groupId/projects', projectRoutes);
 
 // 404 handler
 app.use(notFound);

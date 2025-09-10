@@ -3,7 +3,7 @@ import { prisma } from '../lib/prisma';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 import { createProjectSchema } from '../schemas/validation';
 
-const router = Router();
+const router = Router({ mergeParams: true });
 
 // POST /api/groups/:groupId/projects - Create a new project
 router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
@@ -12,12 +12,28 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
     const { title, description, dueDate } = createProjectSchema.parse(req.body);
     const userId = req.user!.userId;
 
+    // Debug logging
+    console.log('Request params:', req.params);
+    console.log('Group ID:', groupId);
+    console.log('Request URL:', req.url);
+
+    // Validate that groupId exists
+    if (!groupId) {
+      return res.status(400).json({
+        error: 'Group ID is required',
+        debug: {
+          params: req.params,
+          url: req.url
+        }
+      });
+    }
+
     // Check if user is a member of the group
     const membership = await prisma.groupMembership.findUnique({
       where: {
         userId_groupId: {
           userId,
-          groupId
+          groupId: groupId
         }
       }
     });
@@ -61,12 +77,19 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
     const { groupId } = req.params;
     const userId = req.user!.userId;
 
+    // Validate that groupId exists
+    if (!groupId) {
+      return res.status(400).json({
+        error: 'Group ID is required'
+      });
+    }
+
     // Check if user is a member of the group
     const membership = await prisma.groupMembership.findUnique({
       where: {
         userId_groupId: {
           userId,
-          groupId
+          groupId: groupId
         }
       }
     });
