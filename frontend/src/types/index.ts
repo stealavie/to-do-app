@@ -11,7 +11,6 @@ export interface LearningGroup {
   id: string;
   name: string;
   description?: string;
-  isPublic: boolean;
   inviteCode: string;
   createdAt: string;
   memberships: GroupMembership[];
@@ -35,11 +34,17 @@ export interface Project {
   title: string;
   description?: string;
   dueDate?: string;
+  assignedTo?: string;
   createdAt: string;
   groupId: string;
   group?: {
     id: string;
     name: string;
+  };
+  assignedUser?: {
+    id: string;
+    username: string;
+    email: string;
   };
 }
 
@@ -73,7 +78,6 @@ export interface RegisterRequest {
 export interface CreateGroupRequest {
   name: string;
   description?: string;
-  isPublic?: boolean;
 }
 
 export interface JoinGroupRequest {

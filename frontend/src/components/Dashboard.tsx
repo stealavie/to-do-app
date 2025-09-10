@@ -21,6 +21,7 @@ export const Dashboard: React.FC = () => {
 
   const groups = groupsData?.groups || [];
 
+  // Filter function for groups
   const filteredGroups = groups.filter((group: LearningGroup) =>
     group.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (group.description && group.description.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -44,7 +45,7 @@ export const Dashboard: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Your Learning Groups</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Learning Groups</h1>
           <p className="text-gray-600 mt-2">
             Collaborate with others on projects and assignments
           </p>
@@ -63,59 +64,66 @@ export const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-        <input
-          type="text"
-          placeholder="Search groups..."
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
+      {/* Header with Search */}
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-gray-900">My Groups</h2>
+        
+        {/* Search */}
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
+            placeholder="Search groups..."
+            className="pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 w-80"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </div>
 
-      {/* Groups Grid */}
-      {filteredGroups.length === 0 ? (
-        <div className="text-center py-12">
-          {groups.length === 0 ? (
-            <div className="max-w-md mx-auto">
-              <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Users className="w-8 h-8 text-gray-400" />
+      {/* Groups Content */}
+      <div>
+        {filteredGroups.length === 0 ? (
+          <div className="text-center py-12">
+            {groups.length === 0 ? (
+              <div className="max-w-md mx-auto">
+                <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-900 mb-2">No groups yet</h3>
+                <p className="text-gray-600 mb-6">
+                  Create your first learning group or join an existing one to get started.
+                </p>
+                <div className="flex justify-center space-x-3">
+                  <Button variant="secondary" onClick={() => setShowJoinModal(true)}>
+                    Join Group
+                  </Button>
+                  <Button onClick={() => setShowCreateModal(true)}>
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Group
+                  </Button>
+                </div>
               </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">No groups yet</h3>
-              <p className="text-gray-600 mb-6">
-                Create your first learning group or join an existing one to get started.
-              </p>
-              <div className="flex justify-center space-x-3">
-                <Button variant="secondary" onClick={() => setShowJoinModal(true)}>
-                  Join Group
-                </Button>
-                <Button onClick={() => setShowCreateModal(true)}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Group
-                </Button>
+            ) : (
+              <div className="max-w-md mx-auto">
+                <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <Search className="w-8 h-8 text-gray-400" />
+                </div>
+                <h3 className="text-xl font-medium text-gray-900 mb-2">No results found</h3>
+                <p className="text-gray-600">
+                  Try adjusting your search to find the group you're looking for.
+                </p>
               </div>
-            </div>
-          ) : (
-            <div className="max-w-md mx-auto">
-              <div className="bg-gray-100 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                <Search className="w-8 h-8 text-gray-400" />
-              </div>
-              <h3 className="text-xl font-medium text-gray-900 mb-2">No results found</h3>
-              <p className="text-gray-600">
-                Try adjusting your search to find the group you're looking for.
-              </p>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGroups.map((group: LearningGroup) => (
-            <GroupCard key={group.id} group={group} />
-          ))}
-        </div>
-      )}
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredGroups.map((group: LearningGroup) => (
+              <GroupCard key={group.id} group={group} />
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Stats Cards */}
       {groups.length > 0 && (

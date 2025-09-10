@@ -18,7 +18,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   const [formData, setFormData] = useState<CreateGroupRequest>({
     name: '',
     description: '',
-    isPublic: false,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -31,7 +30,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
     try {
       await groupsApi.createGroup(formData);
       onSuccess();
-      setFormData({ name: '', description: '', isPublic: false });
+      setFormData({ name: '', description: '' });
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to create group');
     } finally {
@@ -40,7 +39,7 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
   };
 
   const handleClose = () => {
-    setFormData({ name: '', description: '', isPublic: false });
+    setFormData({ name: '', description: '' });
     setError('');
     onClose();
   };
@@ -94,19 +93,6 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
-          </div>
-
-          <div className="flex items-center">
-            <input
-              id="isPublic"
-              type="checkbox"
-              className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-              checked={formData.isPublic}
-              onChange={(e) => setFormData({ ...formData, isPublic: e.target.checked })}
-            />
-            <label htmlFor="isPublic" className="ml-2 text-sm text-gray-700">
-              Make this group public (anyone can join)
-            </label>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">

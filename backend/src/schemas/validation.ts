@@ -15,8 +15,7 @@ export const loginSchema = z.object({
 // Learning Group schemas
 export const createGroupSchema = z.object({
   name: z.string().min(1, 'Group name is required').max(100, 'Group name must be less than 100 characters'),
-  description: z.string().optional(),
-  isPublic: z.boolean().default(false)
+  description: z.string().optional()
 });
 
 export const joinGroupSchema = z.object({
@@ -52,9 +51,35 @@ export const createProjectSchema = z.object({
   })
 });
 
+// For updating projects - allows partial updates
+export const updateProjectSchema = z.object({
+  title: z.string().min(1, 'Project title is required').max(200, 'Project title must be less than 200 characters').optional(),
+  description: z.string().optional(),
+  dueDate: z.string().optional().transform((val) => {
+    if (!val) return undefined;
+    // Handle both date strings (YYYY-MM-DD) and datetime strings
+    if (val.includes('T')) {
+      // Already a datetime string, validate it
+      return z.string().datetime().parse(val);
+    } else {
+      // Date string, convert to datetime (end of day)
+      try {
+        const date = new Date(val + 'T23:59:59.999Z');
+        if (isNaN(date.getTime())) {
+          throw new Error('Invalid date');
+        }
+        return date.toISOString();
+      } catch {
+        throw new Error('Invalid date format');
+      }
+    }
+  })
+});
+
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type CreateGroupInput = z.infer<typeof createGroupSchema>;
 export type JoinGroupInput = z.infer<typeof joinGroupSchema>;
 export type InviteUserInput = z.infer<typeof inviteUserSchema>;
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
+export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;

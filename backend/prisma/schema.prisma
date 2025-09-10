@@ -17,14 +17,14 @@ model User {
   createdAt DateTime  @default(now())
 
   // Relations
-  memberships GroupMembership[]
+  memberships    GroupMembership[]
+  assignedProjects Project[]
 }
 
 model LearningGroup {
   id          String   @id @default(cuid())
   name        String
   description String?
-  isPublic    Boolean  @default(false) @map("is_public") // Determines if the group is public or private
   inviteCode  String   @unique @default(cuid()) @map("invite_code") // Unique code for sharing/joining
   createdAt   DateTime @default(now())
 
@@ -53,11 +53,13 @@ model Project {
   title       String
   description String?
   dueDate     DateTime? @map("due_date")
+  assignedTo  String?   @map("assigned_to") // User ID of the assigned member
   createdAt   DateTime @default(now())
 
   // Relations
   groupId String        @map("group_id")
   group   LearningGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  assignedUser User?    @relation(fields: [assignedTo], references: [id], onDelete: SetNull)
 }
 
 enum Role {
