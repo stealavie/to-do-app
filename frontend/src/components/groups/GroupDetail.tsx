@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Plus, Users, Settings, Copy, Globe, Lock, Calendar, BookOpen } from 'lucide-react';
+import { ArrowLeft, Plus, Users, Settings, Copy, Calendar, BookOpen } from 'lucide-react';
 import { groupsApi } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../ui/Button';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
 import { ProjectCard } from './ProjectCard';
 import { CreateProjectModal } from './CreateProjectModal';
+import { TaskDetailsPanel } from './TaskDetailsPanel';
 import type { LearningGroup, Project, Role } from '../../types';
 
 export const GroupDetail: React.FC = () => {
@@ -16,6 +17,7 @@ export const GroupDetail: React.FC = () => {
   const { user } = useAuth();
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Project | null>(null);
 
   const { data: groupData, isLoading, error, refetch } = useQuery({
     queryKey: ['group', id],
@@ -75,15 +77,6 @@ export const GroupDetail: React.FC = () => {
         <div className="flex-1">
           <div className="flex items-center space-x-3 mb-2">
             <h1 className="text-3xl font-bold text-gray-900">{group.name}</h1>
-            {group.isPublic ? (
-              <div title="Public group" className="bg-green-100 p-2 rounded-full">
-                <Globe className="w-5 h-5 text-green-600" />
-              </div>
-            ) : (
-              <div title="Private group" className="bg-gray-100 p-2 rounded-full">
-                <Lock className="w-5 h-5 text-gray-500" />
-              </div>
-            )}
             <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
               userRole === 'OWNER'
                 ? 'bg-purple-100 text-purple-800'
@@ -200,8 +193,7 @@ export const GroupDetail: React.FC = () => {
                 <ProjectCard
                   key={project.id}
                   project={project}
-                  onUpdate={refetch}
-                  canEdit={canManageGroup}
+                  onCardClick={setSelectedTask}
                 />
               ))}
             </div>
@@ -245,7 +237,17 @@ export const GroupDetail: React.FC = () => {
         isOpen={showCreateProjectModal}
         onClose={() => setShowCreateProjectModal(false)}
         onSuccess={handleProjectCreated}
-        groupId={group.id}
+        groupId={id!}
+      />
+
+      {/* Task Details Panel */}
+      <TaskDetailsPanel
+        project={selectedTask}
+        groupMembers={group?.memberships || []}
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+        onUpdate={refetch}
+        canEdit={canManageGroup}
       />
     </div>
   );

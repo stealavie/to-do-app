@@ -1,7 +1,7 @@
 import { Router, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
-import { createProjectSchema } from '../schemas/validation';
+import { createProjectSchema, updateProjectSchema } from '../schemas/validation';
 
 const router = Router({ mergeParams: true });
 
@@ -109,6 +109,13 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
         createdAt: 'desc'
       },
       include: {
+        assignedUser: {
+          select: {
+            id: true,
+            username: true,
+            email: true
+          }
+        },
         group: {
           select: {
             id: true,
@@ -119,6 +126,234 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
     });
 
     res.json({ projects });
+  } catch (error) {
+    throw error;
+  }
+});
+
+// PUT /api/groups/:groupId/projects/:projectId/assign - Assign project to a user
+router.put('/:projectId/assign', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { groupId, projectId } = req.params;
+    const { assignedTo } = req.body;
+    const userId = req.user!.userId;
+
+    // Check if user is a member of the group
+    const membership = await prisma.groupMembership.findUnique({
+      where: {
+        userId_groupId: {
+          userId,
+          groupId: groupId
+        }
+      }
+    });
+
+    if (!membership) {
+      return res.status(403).json({
+        error: 'You are not a member of this group'
+      });
+    }
+
+    // Validate that the project exists and belongs to the group
+    const existingProject = await prisma.project.findFirst({
+      where: {
+        id: projectId,
+        groupId: groupId
+      }
+    });
+
+    if (!existingProject) {
+      return res.status(404).json({
+        error: 'Project not found'
+      });
+    }
+
+    // If assignedTo is provided, validate that the user is a member of the group
+    if (assignedTo) {
+      const assigneeMembership = await prisma.groupMembership.findUnique({
+        where: {
+          userId_groupId: {
+            userId: assignedTo,
+            groupId: groupId
+          }
+        }
+      });
+
+      if (!assigneeMembership) {
+        return res.status(400).json({
+          error: 'Assigned user is not a member of this group'
+        });
+      }
+    }
+
+    // Update the project assignment
+    const updatedProject = await prisma.project.update({
+      where: {
+        id: projectId
+      },
+      data: {
+        assignedTo: assignedTo || null
+      },
+      include: {
+        assignedUser: {
+          select: {
+            id: true,
+            username: true,
+            email: true
+          }
+        },
+        group: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+    });
+
+    res.json({
+      message: assignedTo ? 'Project assigned successfully' : 'Project unassigned successfully',
+      project: updatedProject
+    });
+  } catch (error) {
+    throw error;
+  }
+});
+
+// PUT /api/groups/:groupId/projects/:projectId - Update a project
+router.put('/:projectId', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { groupId, projectId } = req.params;
+    const { title, description, dueDate } = updateProjectSchema.parse(req.body);
+    const userId = req.user!.userId;
+
+    // Validate that groupId and projectId exist
+    if (!groupId || !projectId) {
+      return res.status(400).json({
+        error: 'Group ID and Project ID are required'
+      });
+    }
+
+    // Check if user is a member of the group
+    const membership = await prisma.groupMembership.findUnique({
+      where: {
+        userId_groupId: {
+          userId,
+          groupId: groupId
+        }
+      }
+    });
+
+    if (!membership) {
+      return res.status(403).json({
+        error: 'You are not a member of this group'
+      });
+    }
+
+    // Check if project exists and belongs to the group
+    const existingProject = await prisma.project.findFirst({
+      where: {
+        id: projectId,
+        groupId: groupId
+      }
+    });
+
+    if (!existingProject) {
+      return res.status(404).json({
+        error: 'Project not found'
+      });
+    }
+
+    // Update the project (only include fields that are provided)
+    const updateData: any = {};
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (dueDate !== undefined) updateData.dueDate = dueDate ? new Date(dueDate) : null;
+
+    const updatedProject = await prisma.project.update({
+      where: {
+        id: projectId
+      },
+      data: updateData,
+      include: {
+        assignedUser: {
+          select: {
+            id: true,
+            username: true,
+            email: true
+          }
+        },
+        group: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+    });
+
+    res.json({
+      message: 'Project updated successfully',
+      project: updatedProject
+    });
+  } catch (error) {
+    throw error;
+  }
+});
+
+// DELETE /api/groups/:groupId/projects/:projectId - Delete a project
+router.delete('/:projectId', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { groupId, projectId } = req.params;
+    const userId = req.user!.userId;
+
+    // Validate that groupId and projectId exist
+    if (!groupId || !projectId) {
+      return res.status(400).json({
+        error: 'Group ID and Project ID are required'
+      });
+    }
+
+    // Check if user is a member of the group
+    const membership = await prisma.groupMembership.findUnique({
+      where: {
+        userId_groupId: {
+          userId,
+          groupId: groupId
+        }
+      }
+    });
+
+    if (!membership) {
+      return res.status(403).json({
+        error: 'You are not a member of this group'
+      });
+    }
+
+    // Check if project exists and belongs to the group
+    const existingProject = await prisma.project.findFirst({
+      where: {
+        id: projectId,
+        groupId: groupId
+      }
+    });
+
+    if (!existingProject) {
+      return res.status(404).json({
+        error: 'Project not found'
+      });
+    }
+
+    // Delete the project
+    await prisma.project.delete({
+      where: {
+        id: projectId
+      }
+    });
+
+    res.json({
+      message: 'Project deleted successfully'
+    });
   } catch (error) {
     throw error;
   }

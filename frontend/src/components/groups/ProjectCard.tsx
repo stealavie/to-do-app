@@ -1,14 +1,16 @@
 import React from 'react';
-import { Calendar, Clock, AlertCircle } from 'lucide-react';
+import { Calendar, Clock, AlertCircle, User } from 'lucide-react';
+import { useAuth } from '../../contexts/AuthContext';
 import type { Project } from '../../types';
 
 interface ProjectCardProps {
   project: Project;
-  onUpdate: () => void;
-  canEdit: boolean;
+  onCardClick: (project: Project) => void;
 }
 
-export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
+export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onCardClick }) => {
+  const { user } = useAuth();
+  
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString();
   };
@@ -33,8 +35,17 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
 
   const dueDateStatus = project.dueDate ? getDueDateStatus(project.dueDate) : null;
 
+  const getAssignmentDisplayText = () => {
+    if (!project.assignedUser) return 'Unassigned';
+    if (project.assignedUser.id === user?.id) return 'You';
+    return project.assignedUser.username;
+  };
+
   return (
-    <div className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors">
+    <div 
+      className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
+      onClick={() => onCardClick(project)}
+    >
       <div className="flex items-start justify-between mb-3">
         <h4 className="font-medium text-gray-900 flex-1">{project.title}</h4>
         {dueDateStatus?.status === 'overdue' && (
@@ -47,6 +58,16 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
           {project.description}
         </p>
       )}
+
+      {/* Assignment Display */}
+      <div className="mb-3">
+        <div className="flex items-center space-x-2">
+          <User className="w-4 h-4 text-gray-500" />
+          <span className="text-sm text-gray-700">
+            Assigned to: {getAssignmentDisplayText()}
+          </span>
+        </div>
+      </div>
 
       <div className="flex items-center justify-between text-sm">
         <div className="flex items-center space-x-1 text-gray-500">

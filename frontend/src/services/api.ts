@@ -125,6 +125,11 @@ export const projectsApi = {
     const response = await api.delete(`/api/groups/${groupId}/projects/${projectId}`);
     return response.data;
   },
+
+  async assignProject(groupId: string, projectId: string, assignedTo?: string): Promise<{ project: Project; message: string }> {
+    const response = await api.put(`/api/groups/${groupId}/projects/${projectId}/assign`, { assignedTo });
+    return response.data;
+  },
 };
 
 export default api;

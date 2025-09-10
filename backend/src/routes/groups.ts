@@ -31,6 +31,15 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
           }
         },
         projects: {
+          include: {
+            assignedUser: {
+              select: {
+                id: true,
+                username: true,
+                email: true
+              }
+            }
+          },
           orderBy: {
             createdAt: 'desc'
           }
@@ -50,14 +59,13 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
 // POST /api/groups - Create a new learning group
 router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { name, description, isPublic } = createGroupSchema.parse(req.body);
+    const { name, description } = createGroupSchema.parse(req.body);
     const userId = req.user!.userId;
 
     const group = await prisma.learningGroup.create({
       data: {
         name,
         description,
-        isPublic,
         memberships: {
           create: {
             userId,
@@ -117,6 +125,15 @@ router.get('/:id', authenticate, async (req: AuthenticatedRequest, res: Response
           }
         },
         projects: {
+          include: {
+            assignedUser: {
+              select: {
+                id: true,
+                username: true,
+                email: true
+              }
+            }
+          },
           orderBy: {
             createdAt: 'desc'
           }
