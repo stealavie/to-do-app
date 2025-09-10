@@ -1,267 +1,215 @@
-# StudyFlow - Vietnamese Student Time Management Solution
-**NAVER Vietnam AI Hackathon 2024 - Preliminary Assignment**
+# StudyFlow - Collaborative Learning Platform
 
-A modern, intelligent task management application specifically designed for Vietnamese university students to effectively manage their academic workload, part-time jobs, and personal development goals.
+A modern collaborative learning platform that enables students and teams to manage projects, share knowledge, and track progress together. Built with React + TypeScript frontend and Node.js + Prisma backend.
 
-## 🚀 Project Setup & Usage
+## 🚀 Features
 
-**Prerequisites:**
-- Node.js (v16+ recommended)
-- npm or yarn
+### Frontend (React + TypeScript)
+- **Modern UI/UX** - Clean, responsive design with Tailwind CSS
+- **Authentication** - Secure JWT-based auth with context management
+- **Group Management** - Create, join, and manage learning groups
+- **Project Collaboration** - Shared projects with due dates and descriptions
+- **Real-time Updates** - React Query for efficient data synchronization
+- **Responsive Design** - Works seamlessly on desktop and mobile
 
-**Installation & Running:**
+### Backend (Node.js + Prisma)
+- **RESTful API** - Well-structured REST endpoints
+- **Database** - PostgreSQL with Prisma ORM
+- **Authentication** - JWT tokens with bcrypt password hashing
+- **Security** - Helmet, CORS, rate limiting, and input validation
+- **Group System** - Role-based permissions (Owner, Admin, Member)
+- **Invite System** - Secure group invitations with unique codes
+
+## 🏗️ Architecture
+
+### Database Schema
+- **Users** - Authentication and profile information
+- **Learning Groups** - Collaborative spaces with privacy settings
+- **Group Memberships** - User roles and permissions
+- **Projects** - Shared assignments and deadlines
+
+### API Endpoints
+```
+Authentication:
+POST /api/auth/register - Create new account
+POST /api/auth/login    - Sign in to account
+
+Groups:
+GET  /api/groups           - Get user's groups
+POST /api/groups           - Create new group
+GET  /api/groups/:id       - Get group details
+POST /api/groups/join      - Join group with invite code
+POST /api/groups/:id/invite - Invite user to group
+
+Projects:
+GET  /api/groups/:groupId/projects    - Get group projects
+POST /api/groups/:groupId/projects    - Create new project
+```
+
+## 🛠️ Tech Stack
+
+### Frontend
+- **React 19** with TypeScript
+- **Vite** for fast development
+- **Tailwind CSS** for styling
+- **React Router** for navigation
+- **React Query** for server state management
+- **Axios** for HTTP requests
+
+### Backend
+- **Node.js** with Express
+- **TypeScript** for type safety
+- **Prisma** ORM with PostgreSQL
+- **JWT** for authentication
+- **Zod** for input validation
+- **bcryptjs** for password hashing
+
+## 🚦 Quick Start
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL database
+
+### 1. Backend Setup
 ```bash
-# Clone the repository
-git clone [repository-url]
-cd web-track-naver-vietnam-ai-hackathon-stealavie
+cd backend
 
 # Install dependencies
 npm install
 
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your database URL and JWT secret
+
+# Run database migrations
+npm run db:migrate
+
+# Seed the database (optional)
+npm run db:seed
+
 # Start development server
 npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
 ```
 
-**Access the application:**
-- Development: http://localhost:5173/
-- The app works entirely offline with localStorage persistence
+### 2. Frontend Setup
+```bash
+# Install dependencies
+npm install
 
-## 🔗 Deployed Web URL
-🚀 **Live Demo:** [Will be deployed to Vercel/Netlify before deadline]
+# Set up environment variables
+echo "VITE_API_URL=http://localhost:3000" > .env
 
-## 🎥 Demo Video
-📹 **Demo Video:** [Will upload to YouTube as unlisted before deadline]
-
-## 💻 Project Introduction
-
-### a. Overview
-
-**StudyFlow** is a comprehensive task management solution designed specifically for Vietnamese university students who juggle multiple responsibilities including:
-- Academic coursework and assignments
-- Group projects and collaboration
-- Part-time work schedules  
-- Personal development goals
-- Exam preparation and deadlines
-
-The application addresses the unique challenges faced by Vietnamese students by providing intelligent task prioritization, procrastination tracking, and AI-powered productivity insights.
-
-### b. Key Features & Function Manual
-
-#### 📋 **Task Management (CRUD Operations)**
-- **Create Tasks:** Add tasks with title, description, priority, and due dates
-- **Read/View Tasks:** Multiple view modes (Kanban board, List view, Analytics dashboard)
-- **Update Tasks:** Edit task details, change status (TODO → IN_PROGRESS → DONE)
-- **Delete Tasks:** Remove completed or obsolete tasks
-
-#### 🎯 **Smart Prioritization**
-- **Priority Levels:** High, Medium, Low with color coding
-- **Due Date Tracking:** Visual indicators for overdue, today, tomorrow, and future tasks
-- **Status Management:** Clear workflow from TODO to completion
-
-#### 👀 **Three Different Data Views**
-1. **Kanban Board:** Drag-and-drop style columns for different task statuses
-2. **List View:** Compact overview of all tasks with sorting and filtering
-3. **Analytics Dashboard:** Productivity insights and completion statistics
-
-#### ⏰ **Time & Date Handling**
-- **Due Date Management:** Set and track task deadlines
-- **Smart Date Display:** "Today", "Tomorrow", "3 days overdue" format
-- **Calendar Integration:** Visual timeline of upcoming deadlines
-- **Overdue Tracking:** Automatic identification of missed deadlines
-
-#### 🔍 **Advanced Features**
-- **Real-time Search:** Filter tasks by title, description, or content
-- **Local Storage:** Persistent data storage without internet dependency
-- **Responsive Design:** Works on desktop, tablet, and mobile devices
-- **Performance Optimized:** Handles 20+ tasks smoothly with virtual scrolling
-
-### c. Unique Features (What's special about this app?)
-
-#### 🧠 **AI-Powered Productivity Insights**
-- **Procrastination Detection:** Tracks completion patterns to identify delays
-- **Smart Recommendations:** Suggests optimal task scheduling based on user behavior
-- **Productivity Analytics:** Completion rate tracking and trend analysis
-- **Personalized Tips:** Context-aware suggestions for better time management
-
-#### 🎓 **Student-Centric Design**
-- **Academic Focus:** Tailored for university assignments and coursework
-- **Multi-Context Support:** Seamlessly handle academic, work, and personal tasks
-- **Vietnamese Student UX:** Designed with Vietnamese educational system in mind
-- **Offline-First:** Works without internet connection for consistent productivity
-
-#### 🚀 **Modern Technical Implementation**
-- **Zero Dependencies:** No external APIs required for core functionality
-- **Instant Loading:** Fast startup and responsive interactions
-- **Clean Architecture:** Modular component design for maintainability
-- **Type Safety:** Full TypeScript implementation for reliability
-
-### d. Technology Stack and Implementation Methods
-
-#### **Frontend Technologies**
-- **React 19:** Latest version with modern hooks and performance optimizations
-- **TypeScript:** Full type safety and enhanced developer experience
-- **Vite:** Ultra-fast build tool and development server
-- **CSS3:** Custom styling with modern features (Grid, Flexbox, Animations)
-- **Local Storage API:** Browser-native persistence layer
-
-#### **Development Tools**
-- **ESLint:** Code quality and consistency enforcement
-- **Modern JavaScript (ES2024):** Latest language features and syntax
-- **Component-Based Architecture:** Reusable and maintainable code structure
-
-#### **Key Implementation Highlights**
-- **State Management:** React hooks (useState, useEffect, useMemo)
-- **Performance:** Optimized rendering with proper dependency arrays
-- **Accessibility:** Semantic HTML and keyboard navigation support
-- **Responsive Design:** Mobile-first CSS with breakpoint optimization
-
-### e. Service Architecture & Database Structure
-
-#### **Client-Side Architecture**
-```
-┌─────────────────┐
-│   React App     │
-├─────────────────┤
-│  Components     │
-│  - TodoApp      │
-│  - TaskCard     │
-│  - Analytics    │
-├─────────────────┤
-│  State Layer    │
-│  - Task State   │
-│  - UI State     │
-├─────────────────┤
-│  Storage Layer  │
-│  - localStorage │
-└─────────────────┘
+# Start development server
+npm run dev
 ```
 
-#### **Data Models**
-```typescript
-interface Task {
-  id: string;              // Unique identifier
-  title: string;           // Task name
-  description?: string;    // Optional details
-  status: 'TODO' | 'IN_PROGRESS' | 'DONE';
-  priority: 'LOW' | 'MEDIUM' | 'HIGH';
-  dueDate?: Date;          // Optional deadline
-  createdAt: Date;         // Timestamp
-}
+### 3. Access the Application
+- Frontend: http://localhost:5173
+- Backend: http://localhost:3000
+- API Health: http://localhost:3000/health
 
-interface Project {
-  id: string;
-  name: string;
-  color: string;           // UI theming
-}
+## 📁 Project Structure
+
+```
+├── backend/                 # Node.js API server
+│   ├── src/
+│   │   ├── routes/         # API route handlers
+│   │   ├── middleware/     # Authentication & validation
+│   │   ├── schemas/        # Zod validation schemas
+│   │   ├── utils/          # Helper functions
+│   │   └── lib/            # Database connection
+│   ├── prisma/             # Database schema & migrations
+│   └── tests/              # API tests
+├── src/                    # React frontend
+│   ├── components/         # React components
+│   │   ├── auth/          # Login & registration
+│   │   ├── groups/        # Group management
+│   │   ├── layout/        # App layout
+│   │   └── ui/            # Reusable UI components
+│   ├── contexts/          # React contexts
+│   ├── services/          # API service layer
+│   └── types/             # TypeScript definitions
+└── public/                # Static assets
 ```
 
-#### **Storage Strategy**
-- **Primary Storage:** Browser localStorage for persistence
-- **Data Format:** JSON serialization with date parsing
-- **Backup Strategy:** Automatic saves on every data mutation
-- **Scalability:** Designed to handle 100+ tasks efficiently
+## 🔒 Security Features
 
-## 🧠 Reflection
+- **JWT Authentication** - Secure token-based auth
+- **Password Hashing** - bcrypt with salt rounds
+- **Rate Limiting** - Prevent API abuse
+- **CORS Protection** - Configured for frontend domain
+- **Input Validation** - Zod schemas for all endpoints
+- **SQL Injection Protection** - Prisma ORM parameterized queries
 
-### a. If you had more time, what would you expand?
+## 🎯 Key Features
 
-#### **Advanced AI Features**
-- **Machine Learning Integration:** Train models on user behavior to predict optimal work times
-- **Natural Language Processing:** Smart task creation from text descriptions
-- **Habit Analysis:** Deep learning algorithms to identify productivity patterns
-- **Predictive Analytics:** Forecast deadline risks and suggest preventive actions
+### User Authentication
+- Secure registration and login
+- JWT token management
+- Automatic token refresh
+- Protected routes
 
-#### **Enhanced Collaboration**
-- **Real-time Sync:** WebSocket-based multi-device synchronization
-- **Team Features:** Shared projects for group assignments and collaboration
-- **Social Integration:** Study group formation and peer accountability
-- **Mentor System:** Connect with academic advisors and track progress
+### Group Management
+- Create public or private groups
+- Invite system with unique codes
+- Role-based permissions
+- Group statistics and analytics
 
-#### **Advanced Productivity Tools**
-- **Pomodoro Timer:** Built-in focus sessions with break reminders
-- **Time Tracking:** Detailed analytics on actual vs estimated completion times
-- **Calendar Integration:** Sync with Google Calendar, Outlook, university systems
-- **Notification System:** Smart reminders based on user preferences and habits
+### Project Collaboration
+- Create shared projects with deadlines
+- Track project progress
+- Due date notifications
+- Project completion status
 
-#### **Data & Analytics**
-- **Cloud Backup:** Secure data synchronization across devices
-- **Export Features:** PDF reports, CSV data export for external analysis
-- **Advanced Visualizations:** Charts, graphs, and productivity heatmaps
-- **Goal Setting:** SMART goal framework integration with progress tracking
+### Responsive Design
+- Mobile-first approach
+- Tailwind CSS utilities
+- Modern component design
+- Accessible UI patterns
 
-### b. If you integrate AI APIs more for your app, what would you do?
+## 🧪 Testing
 
-#### **Natural Language Processing (OpenAI GPT-4)**
-- **Smart Task Creation:** "I have a calculus exam next Friday" → Auto-create study tasks with suggested timeline
-- **Intelligent Categorization:** Automatically assign projects and priorities based on task descriptions
-- **Content Enhancement:** Generate detailed subtasks and study plans from brief descriptions
-- **Language Support:** Vietnamese language processing for local student needs
-
-#### **Computer Vision (OCR)**
-- **Assignment Scanning:** Take photos of assignment sheets to automatically create tasks
-- **Handwriting Recognition:** Convert handwritten notes into digital task descriptions
-- **Deadline Extraction:** Automatically parse due dates from course syllabi and documents
-- **Schedule Recognition:** Import tasks from photographed timetables and calendars
-
-#### **Predictive AI Models**
-- **Workload Balancing:** Analyze course difficulty and suggest optimal task distribution
-- **Procrastination Prediction:** Machine learning models to identify risk patterns
-- **Performance Optimization:** AI-driven recommendations for study schedules and break timing
-- **Stress Level Monitoring:** Emotional state analysis through interaction patterns
-
-#### **Integration Examples**
-```javascript
-// Smart task creation with GPT-4
-const createSmartTask = async (userInput) => {
-  const response = await openai.chat.completions.create({
-    model: "gpt-4",
-    messages: [{
-      role: "system",
-      content: "You are a study assistant for Vietnamese university students. Parse the input and create structured task data."
-    }, {
-      role: "user", 
-      content: userInput
-    }]
-  });
-  
-  return parseTaskFromAI(response.choices[0].message.content);
-};
-
-// Productivity insights with sentiment analysis
-const generateInsights = async (taskHistory) => {
-  // Analyze patterns and provide personalized recommendations
-  const insights = await analyzeProductivityPatterns(taskHistory);
-  return generateVietnameseInsights(insights);
-};
+### Backend Tests
+```bash
+cd backend
+npm test
+# or run API tests
+./tests/api-test.sh
 ```
 
-#### **AI-Enhanced Features**
-- **Smart Notifications:** Context-aware reminders based on location, time, and activity
-- **Adaptive Interface:** UI that learns and adapts to individual user preferences
-- **Intelligent Scheduling:** AI-powered calendar optimization for maximum productivity
-- **Personalized Learning:** System that continuously improves recommendations based on user feedback
+### Frontend Tests
+```bash
+npm run test
+```
 
-## ✅ Checklist
-- [x] Code runs without errors
-- [x] All required CRUD operations implemented (Create, Read, Update, Delete tasks)
-- [x] Three different data views (Kanban, List, Analytics)
-- [x] Comprehensive time/date handling with smart formatting
-- [x] Supports 20+ items with optimized performance
-- [x] Persistent storage using localStorage
-- [x] Responsive design for all devices
-- [x] Modern React implementation with TypeScript
-- [x] Clean, documented, and maintainable code
-- [x] Student-focused features and UX design
-- [x] AI-powered insights and recommendations
-- [x] Complete documentation and setup instructions
+## 🚀 Deployment
 
----
+### Backend Deployment
+1. Set up PostgreSQL database
+2. Configure environment variables
+3. Run `npm run build`
+4. Deploy to your hosting provider
 
-**Built with ❤️ for Vietnamese university students**  
-*NAVER Vietnam AI Hackathon 2024 - A modern solution for academic productivity*
+### Frontend Deployment
+1. Update `VITE_API_URL` to production API
+2. Run `npm run build`
+3. Deploy `dist/` folder to static hosting
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if needed
+5. Submit a pull request
+
+## 📄 License
+
+MIT License - see LICENSE file for details
+
+## 🙋‍♂️ Support
+
+For questions or issues:
+1. Check the API documentation in `backend/API.md`
+2. Review the implementation summary in `backend/IMPLEMENTATION_SUMMARY.md`
+3. Open an issue on GitHub

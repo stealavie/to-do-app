@@ -1,0 +1,67 @@
+// schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  username  String    @unique // Essential for inviting users
+  password  String    // Will be a hashed password
+  createdAt DateTime  @default(now())
+
+  // Relations
+  memberships GroupMembership[]
+}
+
+model LearningGroup {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  isPublic    Boolean  @default(false) @map("is_public") // Determines if the group is public or private
+  inviteCode  String   @unique @default(cuid()) @map("invite_code") // Unique code for sharing/joining
+  createdAt   DateTime @default(now())
+
+  // Relations
+  memberships GroupMembership[]
+  projects    Project[]
+}
+
+// Join table for the many-to-many relationship between Users and LearningGroups
+model GroupMembership {
+  userId  String @map("user_id")
+  groupId String @map("group_id")
+  role    Role   @default(MEMBER)
+  joinedAt DateTime @default(now())
+
+  // Relations
+  user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group LearningGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@id([userId, groupId]) // Composite primary key
+}
+
+// Represents a shared project or assignment within a group
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime? @map("due_date")
+  createdAt   DateTime @default(now())
+
+  // Relations
+  groupId String        @map("group_id")
+  group   LearningGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}

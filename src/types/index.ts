@@ -1,72 +1,102 @@
-export interface Task {
+// Backend API Types (synchronized with Prisma schema)
+
+export interface User {
   id: string;
-  title: string;
+  email: string;
+  username: string;
+  createdAt: string;
+}
+
+export interface LearningGroup {
+  id: string;
+  name: string;
   description?: string;
-  status: TaskStatus;
-  priority: Priority;
-  dueDate?: Date;
-  tags: string[];
-  createdAt: Date;
-  updatedAt: Date;
-  projectId: string;
-  estimatedTime?: number; // in minutes
-  actualTime?: number; // in minutes
-  reminderTime?: Date;
-  completedAt?: Date;
+  isPublic: boolean;
+  inviteCode: string;
+  createdAt: string;
+  memberships: GroupMembership[];
+  projects: Project[];
+}
+
+export interface GroupMembership {
+  userId: string;
+  groupId: string;
+  role: Role;
+  joinedAt: string;
+  user: {
+    id: string;
+    username: string;
+    email: string;
+  };
 }
 
 export interface Project {
   id: string;
-  name: string;
-  color: string;
-  createdAt: Date;
+  title: string;
   description?: string;
-}
-
-export const TaskStatus = {
-  TODO: 'TODO',
-  IN_PROGRESS: 'IN_PROGRESS',
-  DONE: 'DONE'
-} as const;
-
-export type TaskStatus = typeof TaskStatus[keyof typeof TaskStatus];
-
-export const Priority = {
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH'
-} as const;
-
-export type Priority = typeof Priority[keyof typeof Priority];
-
-export interface StudySession {
-  id: string;
-  taskId: string;
-  startTime: Date;
-  endTime?: Date;
-  duration: number; // in minutes
-  productivity: number; // 1-5 scale
-  notes?: string;
-}
-
-export interface UserStats {
-  totalTasks: number;
-  completedTasks: number;
-  avgCompletionTime: number;
-  procrastinationFactor: number; // estimated vs actual time ratio
-  bestWorkingHours: string[];
-  productivityTrend: number;
-}
-
-export type ViewType = 'kanban' | 'calendar' | 'analytics';
-
-export interface FilterOptions {
-  status?: TaskStatus[];
-  priority?: Priority[];
-  projects?: string[];
-  tags?: string[];
-  dueDate?: {
-    from?: Date;
-    to?: Date;
+  dueDate?: string;
+  createdAt: string;
+  groupId: string;
+  group?: {
+    id: string;
+    name: string;
   };
+}
+
+export const Role = {
+  OWNER: 'OWNER',
+  ADMIN: 'ADMIN',
+  MEMBER: 'MEMBER'
+} as const;
+
+export type Role = typeof Role[keyof typeof Role];
+
+// Auth Types
+export interface AuthResponse {
+  message: string;
+  user: User;
+  token: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  username: string;
+  password: string;
+}
+
+// API Request Types
+export interface CreateGroupRequest {
+  name: string;
+  description?: string;
+  isPublic?: boolean;
+}
+
+export interface JoinGroupRequest {
+  inviteCode: string;
+}
+
+export interface CreateProjectRequest {
+  title: string;
+  description?: string;
+  dueDate?: string;
+}
+
+// API Response Types
+export interface ApiResponse<T> {
+  message?: string;
+  data?: T;
+  error?: string;
+}
+
+export interface GroupsResponse {
+  groups: LearningGroup[];
+}
+
+export interface ProjectsResponse {
+  projects: Project[];
 }
