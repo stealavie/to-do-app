@@ -43,42 +43,57 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project, onCardClick }
 
   return (
     <div 
-      className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors cursor-pointer"
+      className="bg-white rounded-2xl p-6 shadow-soft hover:shadow-soft-lg border border-secondary-200/50 cursor-pointer transition-all duration-300 transform hover:-translate-y-1 active:translate-y-0 group"
       onClick={() => onCardClick(project)}
     >
-      <div className="flex items-start justify-between mb-3">
-        <h4 className="font-medium text-gray-900 flex-1">{project.title}</h4>
+      <div className="flex items-start justify-between mb-4">
+        <h4 className="font-semibold text-secondary-900 flex-1 text-lg group-hover:text-primary-600 transition-colors duration-200">
+          {project.title}
+        </h4>
         {dueDateStatus?.status === 'overdue' && (
-          <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 ml-2" />
+          <div className="bg-danger-100 p-2 rounded-xl flex-shrink-0 ml-3">
+            <AlertCircle className="w-4 h-4 text-danger-600" />
+          </div>
         )}
       </div>
 
       {project.description && (
-        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+        <p className="text-secondary-600 mb-4 line-clamp-2 leading-relaxed">
           {project.description}
         </p>
       )}
 
       {/* Assignment Display */}
-      <div className="mb-3">
-        <div className="flex items-center space-x-2">
-          <User className="w-4 h-4 text-gray-500" />
-          <span className="text-sm text-gray-700">
-            Assigned to: {getAssignmentDisplayText()}
-          </span>
+      <div className="mb-4">
+        <div className="flex items-center space-x-3">
+          <div className="bg-primary-100 p-2 rounded-xl">
+            <User className="w-4 h-4 text-primary-600" />
+          </div>
+          <div>
+            <p className="text-xs text-secondary-500 uppercase tracking-wide font-medium">Assigned to</p>
+            <p className="text-sm font-medium text-secondary-900">
+              {getAssignmentDisplayText()}
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="flex items-center justify-between text-sm">
-        <div className="flex items-center space-x-1 text-gray-500">
+      <div className="flex items-center justify-between pt-4 border-t border-secondary-100">
+        <div className="flex items-center space-x-2 text-secondary-500">
           <Clock className="w-4 h-4" />
-          <span>Created {formatDate(project.createdAt)}</span>
+          <span className="text-sm">Created {formatDate(project.createdAt)}</span>
         </div>
 
         {dueDateStatus && (
-          <div className={`flex items-center space-x-1 ${dueDateStatus.color}`}>
+          <div className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl font-medium text-sm ${
+            dueDateStatus.status === 'overdue' 
+              ? 'bg-danger-100 text-danger-700' 
+              : dueDateStatus.status === 'today' || dueDateStatus.status === 'soon'
+              ? 'bg-warning-100 text-warning-700'
+              : 'bg-secondary-100 text-secondary-700'
+          }`}>
             <Calendar className="w-4 h-4" />
-            <span className="font-medium">{dueDateStatus.text}</span>
+            <span>{dueDateStatus.text}</span>
           </div>
         )}
       </div>

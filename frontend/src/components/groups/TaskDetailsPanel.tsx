@@ -131,29 +131,30 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
   if (!isOpen || !project) return null;
 
   return (
-    <div className="fixed right-0 top-0 h-full w-96 bg-white shadow-xl border-l border-gray-200 z-40 flex flex-col">
+    <div className="fixed right-6 top-32 bottom-6 w-80 bg-white shadow-soft-lg border border-secondary-200/50 z-[60] flex flex-col backdrop-blur-sm rounded-2xl overflow-hidden max-h-[calc(100vh-10rem)]">
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900">Task Details</h3>
+      <div className="flex items-center justify-between p-4 border-b border-secondary-200/50 bg-secondary-50/50 backdrop-blur-sm flex-shrink-0">
+        <h3 className="text-lg font-bold text-secondary-900">Details</h3>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-600 p-1 rounded-md hover:bg-gray-100"
+          className="text-secondary-400 hover:text-secondary-600 p-1.5 rounded-lg hover:bg-secondary-100 transition-all duration-200 transform hover:scale-110 active:scale-95 group"
+          aria-label="Close project details"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
         </button>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-6">
+      <div className="flex-1 overflow-y-auto p-4 space-y-5">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-600 px-3 py-2 rounded-md text-sm">
+          <div className="bg-danger-50 border border-danger-200 text-danger-700 px-3 py-2 rounded-lg text-xs font-medium">
             {error}
           </div>
         )}
 
         {/* Title */}
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="title" className="block text-xs font-bold text-secondary-600 mb-2 uppercase tracking-wide">
             Title *
           </label>
           {canEdit ? (
@@ -162,37 +163,42 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
               type="text"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 font-medium placeholder:text-secondary-400 text-sm"
+              placeholder="Enter title..."
             />
           ) : (
-            <p className="text-gray-900 font-medium">{project.title}</p>
+            <p className="text-secondary-900 font-semibold text-sm bg-secondary-50 px-3 py-2 rounded-lg">
+              {project.title}
+            </p>
           )}
         </div>
 
         {/* Description */}
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="description" className="block text-xs font-bold text-secondary-600 mb-2 uppercase tracking-wide">
             Description
           </label>
           {canEdit ? (
             <textarea
               id="description"
-              rows={4}
+              rows={3}
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              placeholder="Add a description..."
+              className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 font-medium placeholder:text-secondary-400 resize-none text-sm"
+              placeholder="Add description..."
             />
           ) : (
-            <p className="text-gray-700">
-              {project.description || 'No description provided'}
-            </p>
+            <div className="bg-secondary-50 px-3 py-2 rounded-lg">
+              <p className="text-secondary-700 text-sm leading-relaxed">
+                {project.description || 'No description provided'}
+              </p>
+            </div>
           )}
         </div>
 
         {/* Due Date */}
         <div>
-          <label htmlFor="dueDate" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="dueDate" className="block text-xs font-bold text-secondary-600 mb-2 uppercase tracking-wide">
             Due Date
           </label>
           {canEdit ? (
@@ -201,33 +207,49 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
               type="date"
               value={formData.dueDate}
               onChange={(e) => handleInputChange('dueDate', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 font-medium text-sm"
             />
           ) : (
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-4 h-4 text-gray-500" />
-              {project.dueDate ? (
-                <span className={dueDateStatus?.color || 'text-gray-700'}>
-                  {dueDateStatus?.text}
-                </span>
-              ) : (
-                <span className="text-gray-500">No due date set</span>
-              )}
+            <div className="bg-secondary-50 px-3 py-2 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <div className={`p-1.5 rounded-lg ${
+                  dueDateStatus?.status === 'overdue' 
+                    ? 'bg-danger-100' 
+                    : dueDateStatus?.status === 'today' || dueDateStatus?.status === 'soon'
+                    ? 'bg-warning-100'
+                    : 'bg-primary-100'
+                }`}>
+                  <Calendar className={`w-3 h-3 ${
+                    dueDateStatus?.status === 'overdue' 
+                      ? 'text-danger-600' 
+                      : dueDateStatus?.status === 'today' || dueDateStatus?.status === 'soon'
+                      ? 'text-warning-600'
+                      : 'text-primary-600'
+                  }`} />
+                </div>
+                {project.dueDate ? (
+                  <span className={`font-medium text-xs ${dueDateStatus?.color || 'text-secondary-700'}`}>
+                    {dueDateStatus?.text}
+                  </span>
+                ) : (
+                  <span className="text-secondary-500 font-medium text-xs">No due date</span>
+                )}
+              </div>
             </div>
           )}
         </div>
 
         {/* Assignee */}
         <div>
-          <label htmlFor="assignedTo" className="block text-sm font-medium text-gray-700 mb-2">
-            Assigned to
+          <label htmlFor="assignedTo" className="block text-xs font-bold text-secondary-600 mb-2 uppercase tracking-wide">
+            Assigned
           </label>
           {canEdit ? (
             <select
               id="assignedTo"
               value={formData.assignedTo}
               onChange={(e) => handleInputChange('assignedTo', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 font-medium appearance-none bg-white text-sm"
             >
               <option value="">Unassigned</option>
               {groupMembers.map((member) => (
@@ -237,50 +259,72 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
               ))}
             </select>
           ) : (
-            <div className="flex items-center space-x-2">
-              <User className="w-4 h-4 text-gray-500" />
-              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                project.assignedUser 
-                  ? 'bg-blue-100 text-blue-800' 
-                  : 'bg-gray-100 text-gray-600'
-              }`}>
-                {project.assignedUser ? getAssigneeDisplayName(project.assignedUser.id) : 'Unassigned'}
-              </span>
+            <div className="bg-secondary-50 px-3 py-2 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <div className={`p-1.5 rounded-lg ${
+                  project.assignedUser ? 'bg-primary-100' : 'bg-secondary-100'
+                }`}>
+                  <User className={`w-3 h-3 ${
+                    project.assignedUser ? 'text-primary-600' : 'text-secondary-500'
+                  }`} />
+                </div>
+                <span className={`font-medium px-2 py-1 rounded-lg text-xs ${
+                  project.assignedUser 
+                    ? 'bg-primary-100 text-primary-800' 
+                    : 'bg-secondary-100 text-secondary-600'
+                }`}>
+                  {project.assignedUser ? getAssigneeDisplayName(project.assignedUser.id) : 'Unassigned'}
+                </span>
+              </div>
             </div>
           )}
         </div>
 
         {/* Meta Information */}
-        <div className="pt-4 border-t border-gray-200">
-          <div className="text-sm text-gray-500">
-            <p>Created: {formatDate(project.createdAt)}</p>
-            {project.group && (
-              <p>Group: {project.group.name}</p>
-            )}
+        <div className="pt-4 border-t border-secondary-200/50">
+          <div className="bg-secondary-50 p-3 rounded-lg">
+            <h4 className="text-xs font-bold text-secondary-600 uppercase tracking-wide mb-2">
+              Info
+            </h4>
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-secondary-500">Created:</span>
+                <span className="font-medium text-secondary-700">{formatDate(project.createdAt)}</span>
+              </div>
+              {project.group && (
+                <div className="flex items-center justify-between">
+                  <span className="text-secondary-500">Group:</span>
+                  <span className="font-medium text-secondary-700 truncate ml-2">{project.group.name}</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Footer Actions */}
       {canEdit && (
-        <div className="p-4 border-t border-gray-200 bg-gray-50">
-          <div className="flex justify-between">
-            <Button
-              variant="secondary"
-              onClick={handleDelete}
-              loading={loading}
-              className="text-red-600 hover:text-red-700 hover:bg-red-50"
-            >
-              <Trash2 className="w-4 h-4 mr-2" />
-              Delete
-            </Button>
+        <div className="p-4 border-t border-secondary-200/50 bg-secondary-50/50 backdrop-blur-sm flex-shrink-0">
+          <div className="flex flex-col space-y-2">
             <Button
               onClick={handleSave}
               loading={loading}
               disabled={!formData.title.trim()}
+              size="sm"
+              className="w-full"
             >
-              <Save className="w-4 h-4 mr-2" />
+              <Save className="w-3 h-3 mr-2" />
               Save Changes
+            </Button>
+            <Button
+              variant="danger"
+              onClick={handleDelete}
+              loading={loading}
+              size="sm"
+              className="w-full"
+            >
+              <Trash2 className="w-3 h-3 mr-2" />
+              Delete Project
             </Button>
           </div>
         </div>
