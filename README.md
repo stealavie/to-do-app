@@ -1,215 +1,93 @@
-# StudyFlow - Collaborative Learning Platform
+# To-Do App – Preliminary Assignment Submission
+⚠️ Please complete **all sections marked with the ✍️ icon** — these are required for your submission.
 
-A modern collaborative learning platform that enables students and teams to manage projects, share knowledge, and track progress together. Built with React + TypeScript frontend and Node.js + Prisma backend.
+👀 Please Check ASSIGNMENT.md file in this repository for assignment requirements.
 
-## 🚀 Features
+## 🚀 Project Setup & Usage
+**How to install and run your project:**  
+✍️  
+**Backend**
+1. Navigate to the `backend` directory: `cd backend`
+2. Install dependencies: `npm install`
+3. Set up environment variables by copying the example file: `cp .env.example .env`
+4. Edit the `.env` file with your PostgreSQL database URL and a JWT secret.
+5. Apply database migrations: `npm run db:migrate`
+6. (Optional) Seed the database with initial data: `npm run db:seed`
+7. Start the development server: `npm run dev`
 
-### Frontend (React + TypeScript)
-- **Modern UI/UX** - Clean, responsive design with Tailwind CSS
-- **Authentication** - Secure JWT-based auth with context management
-- **Group Management** - Create, join, and manage learning groups
-- **Project Collaboration** - Shared projects with due dates and descriptions
-- **Real-time Updates** - React Query for efficient data synchronization
-- **Responsive Design** - Works seamlessly on desktop and mobile
+**Frontend**
+1. Navigate to the `frontend` directory: `cd frontend`
+2. Install dependencies: `npm install`
+3. Create a `.env` file with the backend API URL: `echo "VITE_API_URL=http://localhost:3000" > .env`
+4. Start the development server: `npm run dev`
 
-### Backend (Node.js + Prisma)
-- **RESTful API** - Well-structured REST endpoints
-- **Database** - PostgreSQL with Prisma ORM
-- **Authentication** - JWT tokens with bcrypt password hashing
-- **Security** - Helmet, CORS, rate limiting, and input validation
-- **Group System** - Role-based permissions (Owner, Admin, Member)
-- **Invite System** - Secure group invitations with unique codes
 
-## 🏗️ Architecture
+## 🔗 Deployed Web URL or APK file
+✍️ Not applicable for this project. The application is designed to be run locally.
 
-### Database Schema
-- **Users** - Authentication and profile information
-- **Learning Groups** - Collaborative spaces with privacy settings
-- **Group Memberships** - User roles and permissions
-- **Projects** - Shared assignments and deadlines
+## 🎥 Demo Video
+**Demo video link (≤ 2 minutes):**  
+📌 **Video Upload Guideline:** when uploading your demo video to YouTube, please set the visibility to **Unlisted**.  
+- “Unlisted” videos can only be viewed by users who have the link.  
+- The video will not appear in search results or on your channel.  
+- Share the link in your README so mentors can access it.  
 
-### API Endpoints
-```
-Authentication:
-POST /api/auth/register - Create new account
-POST /api/auth/login    - Sign in to account
+✍️ No demo video available.
 
-Groups:
-GET  /api/groups           - Get user's groups
-POST /api/groups           - Create new group
-GET  /api/groups/:id       - Get group details
-POST /api/groups/join      - Join group with invite code
-POST /api/groups/:id/invite - Invite user to group
+## 📖 Function Manual
+✍️ The **StudyFlow** platform provides a comprehensive suite of features for collaborative learning:
+- **User Authentication**: Secure user registration and login system using JWT.
+- **Group Management**: Users can create new learning groups, which generates a unique invite code. Other users can join existing groups using this code.
+- **Project Collaboration**: Within groups, members can create and manage shared projects, including setting names, descriptions, and deadlines.
+- **Real-time Updates**: The interface uses modern data fetching strategies to ensure that all information is kept up-to-date across clients, providing a seamless collaborative experience.
 
-Projects:
-GET  /api/groups/:groupId/projects    - Get group projects
-POST /api/groups/:groupId/projects    - Create new project
-```
-
-## 🛠️ Tech Stack
-
+## 🛠 Technology Stack and Implementation Methods
+✍️ 
 ### Frontend
-- **React 19** with TypeScript
-- **Vite** for fast development
-- **Tailwind CSS** for styling
-- **React Router** for navigation
-- **React Query** for server state management
-- **Axios** for HTTP requests
+- **React 19** with **TypeScript** for a robust, type-safe component-based architecture.
+- **Vite** for an optimized and fast development experience.
+- **Tailwind CSS** for rapid, utility-first styling.
+- **React Router** for client-side routing and navigation.
+- **React Query** for efficient server state management, caching, and data synchronization.
+- **Axios** for making HTTP requests to the backend API.
 
 ### Backend
-- **Node.js** with Express
-- **TypeScript** for type safety
-- **Prisma** ORM with PostgreSQL
-- **JWT** for authentication
-- **Zod** for input validation
-- **bcryptjs** for password hashing
+- **Node.js** with **Express** for building a scalable and efficient RESTful API.
+- **TypeScript** to ensure type safety and improve code quality.
+- **Prisma** as the ORM for seamless and safe database access with PostgreSQL.
+- **JSON Web Tokens (JWT)** for securing API endpoints and managing user sessions.
+- **Zod** for rigorous input validation to prevent invalid data.
+- **bcryptjs** for securely hashing user passwords.
 
-## 🚦 Quick Start
+## 🗄 Database structure (when used)
+✍️ The database schema is managed by Prisma and consists of the following main models:
+- **User**: Stores user account information, including credentials and profile details.
+- **Group**: Represents a learning group where users can collaborate. Each group has a unique invite code.
+- **GroupMember**: A mapping table that links users to groups and defines their roles (e.g., owner, member).
+- **Project**: Represents a project within a group, containing details like its title, description, and due date.
+- **Notification**: Stores notifications for users, such as project deadline reminders.
 
-### Prerequisites
-- Node.js 18+
-- PostgreSQL database
+## 🧠 Reflection
 
-### 1. Backend Setup
-```bash
-cd backend
+### What’s special about this app?  
+✍️ This application stands out by focusing on the core tenets of collaborative learning. It's not just another to-do list; it's a structured environment where students and team members can organize their work in a shared context. The real-time nature of the frontend ensures that all users have a consistent view of the project's status, fostering better communication and teamwork. The modern, type-safe technology stack (React/Node.js with TypeScript) makes the platform robust, scalable, and maintainable.
 
-# Install dependencies
-npm install
+### If you had more time, what would you expand?  
+✍️ Given more time, I would expand the platform's feature set to include:
+- **Real-time Chat**: A chat feature within each group to allow for instant communication.
+- **Granular Task Management**: A more detailed task system within projects, including sub-tasks, assignments to specific users, and status tracking (e.g., To Do, In Progress, Done).
+- **Calendar View**: A visual calendar that displays all project deadlines to help teams manage their time effectively.
+- **File Sharing**: The ability to upload and attach files to projects and tasks.
+- **Third-Party Integrations**: Connections to services like Google Drive, GitHub, or Figma to centralize resources.
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your database URL and JWT secret
+### If you integrate AI APIs more for your app, what would you do?  
+✍️ Integrating AI could significantly enhance the platform's value:
+- **AI Task Generation**: An AI could analyze a project description and automatically suggest a breakdown of tasks and sub-tasks.
+- **Smart Scheduling**: AI could recommend project deadlines based on the team's current workload and past performance.
+- **Progress Summarization**: An AI assistant could generate daily or weekly progress summaries for teams or instructors, highlighting accomplishments and potential blockers.
+- **Learning Resource Recommendations**: Based on the topics of the projects, an AI could suggest relevant articles, tutorials, and documentation to aid the learning process.
 
-# Run database migrations
-npm run db:migrate
-
-# Seed the database (optional)
-npm run db:seed
-
-# Start development server
-npm run dev
-```
-
-### 2. Frontend Setup
-```bash
-# Install dependencies
-npm install
-
-# Set up environment variables
-echo "VITE_API_URL=http://localhost:3000" > .env
-
-# Start development server
-npm run dev
-```
-
-### 3. Access the Application
-- Frontend: http://localhost:5173
-- Backend: http://localhost:3000
-- API Health: http://localhost:3000/health
-
-## 📁 Project Structure
-
-```
-├── backend/                 # Node.js API server
-│   ├── src/
-│   │   ├── routes/         # API route handlers
-│   │   ├── middleware/     # Authentication & validation
-│   │   ├── schemas/        # Zod validation schemas
-│   │   ├── utils/          # Helper functions
-│   │   └── lib/            # Database connection
-│   ├── prisma/             # Database schema & migrations
-│   └── tests/              # API tests
-├── src/                    # React frontend
-│   ├── components/         # React components
-│   │   ├── auth/          # Login & registration
-│   │   ├── groups/        # Group management
-│   │   ├── layout/        # App layout
-│   │   └── ui/            # Reusable UI components
-│   ├── contexts/          # React contexts
-│   ├── services/          # API service layer
-│   └── types/             # TypeScript definitions
-└── public/                # Static assets
-```
-
-## 🔒 Security Features
-
-- **JWT Authentication** - Secure token-based auth
-- **Password Hashing** - bcrypt with salt rounds
-- **Rate Limiting** - Prevent API abuse
-- **CORS Protection** - Configured for frontend domain
-- **Input Validation** - Zod schemas for all endpoints
-- **SQL Injection Protection** - Prisma ORM parameterized queries
-
-## 🎯 Key Features
-
-### User Authentication
-- Secure registration and login
-- JWT token management
-- Automatic token refresh
-- Protected routes
-
-### Group Management
-- Create public or private groups
-- Invite system with unique codes
-- Role-based permissions
-- Group statistics and analytics
-
-### Project Collaboration
-- Create shared projects with deadlines
-- Track project progress
-- Due date notifications
-- Project completion status
-
-### Responsive Design
-- Mobile-first approach
-- Tailwind CSS utilities
-- Modern component design
-- Accessible UI patterns
-
-## 🧪 Testing
-
-### Backend Tests
-```bash
-cd backend
-npm test
-# or run API tests
-./tests/api-test.sh
-```
-
-### Frontend Tests
-```bash
-npm run test
-```
-
-## 🚀 Deployment
-
-### Backend Deployment
-1. Set up PostgreSQL database
-2. Configure environment variables
-3. Run `npm run build`
-4. Deploy to your hosting provider
-
-### Frontend Deployment
-1. Update `VITE_API_URL` to production API
-2. Run `npm run build`
-3. Deploy `dist/` folder to static hosting
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if needed
-5. Submit a pull request
-
-## 📄 License
-
-MIT License - see LICENSE file for details
-
-## 🙋‍♂️ Support
-
-For questions or issues:
-1. Check the API documentation in `backend/API.md`
-2. Review the implementation summary in `backend/IMPLEMENTATION_SUMMARY.md`
-3. Open an issue on GitHub
+## ✅ Checklist
+- [✅] Code runs without errors  
+- [✅] All required features implemented (add/edit/delete/complete tasks)  
+- [✅] All ✍️ sections are filled
