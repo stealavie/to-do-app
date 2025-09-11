@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, User, Trash2, Save, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { projectsApi } from '../../services/api';
-import { useAuth } from '../../contexts/AuthContext';
-import { useNotifications } from '../../contexts/NotificationContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useNotifications } from '../../hooks/useNotifications';
 import { Button } from '../ui/Button';
 import type { Project, GroupMembership } from '../../types';
 
@@ -24,7 +24,7 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
   canEdit
 }) => {
   const { user } = useAuth();
-  const notificationContext = useNotifications() as any; // Cast to access helper functions
+  const notificationContext = useNotifications();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -83,7 +83,13 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
     setError('');
     
     try {
-      const updateData: any = {
+      const updateData: {
+        title: string;
+        description?: string;
+        dueDate?: string;
+        priority: 'LOW' | 'MEDIUM' | 'HIGH';
+        status: 'PLANNING' | 'IN_PROGRESS' | 'DONE';
+      } = {
         title: formData.title,
         description: formData.description || undefined,
         dueDate: formData.dueDate || undefined,
@@ -101,14 +107,15 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
         // Refresh notifications after assignment to get the new notification from backend
         if (notificationContext.refreshNotifications) {
           setTimeout(() => {
-            notificationContext.refreshNotifications();
+            notificationContext.refreshNotifications?.();
           }, 1000); // Small delay to ensure backend has processed the notification
         }
       }
       
       onUpdate();
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to update project');
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      setError(axiosError.response?.data?.error || 'Failed to update project');
     } finally {
       setLoading(false);
     }
@@ -128,8 +135,9 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
       await projectsApi.deleteProject(project.groupId, project.id);
       onUpdate();
       onClose();
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to delete project');
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      setError(axiosError.response?.data?.error || 'Failed to delete project');
     } finally {
       setLoading(false);
     }

@@ -134,7 +134,7 @@ export const projectsApi = {
 
 // Notifications API
 export const notificationsApi = {
-  async getNotifications(): Promise<{ notifications: any[] }> {
+  async getNotifications(): Promise<{ notifications: Notification[] }> {
     const response = await api.get('/api/notifications');
     return response.data;
   },

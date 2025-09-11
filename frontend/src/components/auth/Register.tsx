@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/Button';
 
 export const Register: React.FC = () => {
@@ -30,8 +30,9 @@ export const Register: React.FC = () => {
 
     try {
       await register(email, username, password);
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Registration failed. Please try again.');
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      setError(axiosError.response?.data?.error || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

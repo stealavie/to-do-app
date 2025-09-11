@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
-import { useNotifications } from '../contexts/NotificationContext';
+import { useNotifications } from './useNotifications';
 import { projectsApi } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from './useAuth';
 
 // Helper function to check if a date is within 24 hours
 const isWithin24Hours = (date: string): boolean => {
@@ -13,7 +13,7 @@ const isWithin24Hours = (date: string): boolean => {
 
 export const useDeadlineNotifications = () => {
   const { user } = useAuth();
-  const notificationContext = useNotifications() as any;
+  const notificationContext = useNotifications();
 
   const checkDeadlines = useCallback(async () => {
     if (!user) return;
@@ -34,16 +34,24 @@ export const useDeadlineNotifications = () => {
           ) {
             // Check if we've already sent a notification for this deadline
             const notificationExists = notificationContext.notifications.some(
-              (n: any) => 
+              (n) => 
                 n.type === 'DEADLINE_APPROACHING' && 
                 n.projectId === project.id &&
                 n.createdAt > new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString() // Within last 24 hours
             );
 
-            if (!notificationExists && notificationContext.generateDeadlineNotification) {
-              notificationContext.generateDeadlineNotification({
-                ...project,
-                group: { id: group.id, name: group.name }
+            if (!notificationExists) {
+              notificationContext.addNotification({
+                type: 'DEADLINE_APPROACHING',
+                title: `Deadline Approaching`,
+                message: `Project "${project.title}" is due within 24 hours`,
+                projectId: project.id,
+                groupId: group.id,
+                metadata: {
+                  projectTitle: project.title,
+                  groupName: group.name,
+                  dueDate: project.dueDate,
+                },
               });
             }
           }

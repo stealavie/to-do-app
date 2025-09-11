@@ -3,9 +3,10 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Plus, Settings, Copy, Calendar, BookOpen, Filter, User, Inbox, BarChart3 } from 'lucide-react';
 import { groupsApi } from '../../services/api';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/Button';
 import { LoadingSpinner } from '../ui/LoadingSpinner';
+import { FilterButton } from '../ui/FilterButton';
 import { ProjectCard } from './ProjectCard';
 import { CreateProjectModal } from './CreateProjectModal';
 import { TaskDetailsPanel } from './TaskDetailsPanel';
@@ -249,114 +250,84 @@ export const GroupDetail: React.FC = () => {
             
             {/* Assignment Filter */}
             <div className="flex space-x-1">
-              <button
+              <FilterButton
+                isActive={projectFilter === 'all'}
                 onClick={() => setProjectFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  projectFilter === 'all'
-                    ? 'bg-primary-100 text-primary-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="primary"
               >
                 All Projects
-              </button>
-              <button
+              </FilterButton>
+              <FilterButton
+                isActive={projectFilter === 'my'}
                 onClick={() => setProjectFilter('my')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  projectFilter === 'my'
-                    ? 'bg-primary-100 text-primary-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="primary"
               >
                 My Projects
-              </button>
+              </FilterButton>
             </div>
 
             {/* Status Filter */}
             <div className="flex space-x-1">
-              <button
+              <FilterButton
+                isActive={statusFilter === 'all'}
                 onClick={() => setStatusFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  statusFilter === 'all'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="blue"
               >
                 All Status
-              </button>
-              <button
+              </FilterButton>
+              <FilterButton
+                isActive={statusFilter === 'PLANNING'}
                 onClick={() => setStatusFilter('PLANNING')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  statusFilter === 'PLANNING'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="blue"
               >
                 Planning
-              </button>
-              <button
+              </FilterButton>
+              <FilterButton
+                isActive={statusFilter === 'IN_PROGRESS'}
                 onClick={() => setStatusFilter('IN_PROGRESS')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  statusFilter === 'IN_PROGRESS'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="blue"
               >
                 In Progress
-              </button>
-              <button
+              </FilterButton>
+              <FilterButton
+                isActive={statusFilter === 'DONE'}
                 onClick={() => setStatusFilter('DONE')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  statusFilter === 'DONE'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="blue"
               >
                 Done
-              </button>
+              </FilterButton>
             </div>
 
             {/* Priority Filter */}
             <div className="flex space-x-1">
-              <button
+              <FilterButton
+                isActive={priorityFilter === 'all'}
                 onClick={() => setPriorityFilter('all')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  priorityFilter === 'all'
-                    ? 'bg-orange-100 text-orange-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="orange"
               >
                 All Priority
-              </button>
-              <button
+              </FilterButton>
+              <FilterButton
+                isActive={priorityFilter === 'HIGH'}
                 onClick={() => setPriorityFilter('HIGH')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  priorityFilter === 'HIGH'
-                    ? 'bg-red-100 text-red-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="red"
               >
                 High
-              </button>
-              <button
+              </FilterButton>
+              <FilterButton
+                isActive={priorityFilter === 'MEDIUM'}
                 onClick={() => setPriorityFilter('MEDIUM')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  priorityFilter === 'MEDIUM'
-                    ? 'bg-yellow-100 text-yellow-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="yellow"
               >
                 Medium
-              </button>
-              <button
+              </FilterButton>
+              <FilterButton
+                isActive={priorityFilter === 'LOW'}
                 onClick={() => setPriorityFilter('LOW')}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                  priorityFilter === 'LOW'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-secondary-100 text-secondary-600 hover:bg-secondary-200'
-                }`}
+                variant="blue"
               >
                 Low
-              </button>
+              </FilterButton>
             </div>
           </div>
         </div>

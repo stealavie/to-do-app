@@ -40,8 +40,9 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
       await projectsApi.createProject(groupId, projectData);
       onSuccess();
       setFormData({ title: '', description: '', dueDate: '', priority: 'MEDIUM', status: 'PLANNING' });
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to create project');
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      setError(axiosError.response?.data?.error || 'Failed to create project');
     } finally {
       setLoading(false);
     }

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Bell, X, CheckCircle, Clock, ArrowRight } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
-import { useNotifications } from '../../contexts/NotificationContext';
+import { useNotifications } from '../../hooks/useNotifications';
 import { useNotificationNavigation } from '../../hooks/useNotificationNavigation';
 import type { Notification } from '../../types';
 

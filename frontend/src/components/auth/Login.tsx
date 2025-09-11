@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/Button';
 
 export const Login: React.FC = () => {
@@ -17,8 +17,9 @@ export const Login: React.FC = () => {
 
     try {
       await login(email, password);
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Login failed. Please try again.');
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      setError(axiosError.response?.data?.error || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }

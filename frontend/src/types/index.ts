@@ -150,4 +150,6 @@ export interface NotificationContext {
   markAllAsRead: () => void;
   removeNotification: (notificationId: string) => void;
   clearAllNotifications: () => void;
+  refreshNotifications?: () => void;
+  loading?: boolean;
 }
