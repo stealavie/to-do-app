@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, User, Trash2, Save } from 'lucide-react';
+import { X, Calendar, User, Trash2, Save, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
 import { projectsApi } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotifications } from '../../contexts/NotificationContext';
@@ -29,7 +29,9 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
     title: '',
     description: '',
     dueDate: '',
-    assignedTo: ''
+    assignedTo: '',
+    priority: 'MEDIUM' as 'LOW' | 'MEDIUM' | 'HIGH',
+    status: 'PLANNING' as 'PLANNING' | 'IN_PROGRESS' | 'DONE'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -41,7 +43,9 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
         title: project.title,
         description: project.description || '',
         dueDate: project.dueDate ? new Date(project.dueDate).toISOString().split('T')[0] : '',
-        assignedTo: project.assignedTo || ''
+        assignedTo: project.assignedTo || '',
+        priority: project.priority || 'MEDIUM',
+        status: project.status || 'PLANNING'
       });
     }
   }, [project]);
@@ -82,7 +86,9 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
       const updateData: any = {
         title: formData.title,
         description: formData.description || undefined,
-        dueDate: formData.dueDate || undefined
+        dueDate: formData.dueDate || undefined,
+        priority: formData.priority,
+        status: formData.status
       };
 
       // Update basic project details
@@ -289,6 +295,102 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
           )}
         </div>
 
+        {/* Priority */}
+        <div>
+          <label htmlFor="priority" className="block text-xs font-bold text-secondary-600 mb-2 uppercase tracking-wide">
+            Priority
+          </label>
+          {canEdit ? (
+            <select
+              id="priority"
+              value={formData.priority}
+              onChange={(e) => handleInputChange('priority', e.target.value)}
+              className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 font-medium appearance-none bg-white text-sm"
+            >
+              <option value="LOW">Low</option>
+              <option value="MEDIUM">Medium</option>
+              <option value="HIGH">High</option>
+            </select>
+          ) : (
+            <div className="bg-secondary-50 px-3 py-2 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <div className={`p-1.5 rounded-lg ${
+                  project?.priority === 'HIGH' 
+                    ? 'bg-danger-100' 
+                    : project?.priority === 'MEDIUM'
+                    ? 'bg-warning-100'
+                    : 'bg-success-100'
+                }`}>
+                  {project?.priority === 'HIGH' ? (
+                    <AlertTriangle className="w-3 h-3 text-danger-600" />
+                  ) : project?.priority === 'MEDIUM' ? (
+                    <Clock className="w-3 h-3 text-warning-600" />
+                  ) : (
+                    <CheckCircle className="w-3 h-3 text-success-600" />
+                  )}
+                </div>
+                <span className={`font-medium text-xs px-2 py-1 rounded-lg ${
+                  project?.priority === 'HIGH' 
+                    ? 'bg-danger-100 text-danger-800' 
+                    : project?.priority === 'MEDIUM'
+                    ? 'bg-warning-100 text-warning-800'
+                    : 'bg-success-100 text-success-800'
+                }`}>
+                  {project?.priority || 'Medium'}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Status */}
+        <div>
+          <label htmlFor="status" className="block text-xs font-bold text-secondary-600 mb-2 uppercase tracking-wide">
+            Status
+          </label>
+          {canEdit ? (
+            <select
+              id="status"
+              value={formData.status}
+              onChange={(e) => handleInputChange('status', e.target.value)}
+              className="w-full px-3 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-all duration-200 font-medium appearance-none bg-white text-sm"
+            >
+              <option value="PLANNING">Planning</option>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="DONE">Done</option>
+            </select>
+          ) : (
+            <div className="bg-secondary-50 px-3 py-2 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <div className={`p-1.5 rounded-lg ${
+                  project?.status === 'DONE' 
+                    ? 'bg-success-100' 
+                    : project?.status === 'IN_PROGRESS'
+                    ? 'bg-primary-100'
+                    : 'bg-secondary-100'
+                }`}>
+                  {project?.status === 'DONE' ? (
+                    <CheckCircle className="w-3 h-3 text-success-600" />
+                  ) : project?.status === 'IN_PROGRESS' ? (
+                    <Clock className="w-3 h-3 text-primary-600" />
+                  ) : (
+                    <Calendar className="w-3 h-3 text-secondary-600" />
+                  )}
+                </div>
+                <span className={`font-medium text-xs px-2 py-1 rounded-lg ${
+                  project?.status === 'DONE' 
+                    ? 'bg-success-100 text-success-800' 
+                    : project?.status === 'IN_PROGRESS'
+                    ? 'bg-primary-100 text-primary-800'
+                    : 'bg-secondary-100 text-secondary-800'
+                }`}>
+                  {project?.status === 'DONE' ? 'Done' : project?.status === 'IN_PROGRESS' ? 'In Progress' : 'Planning'}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Meta Information */}
         <div className="pt-4 border-t border-secondary-200/50">
           <div className="bg-secondary-50 p-3 rounded-lg">
@@ -304,6 +406,14 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
                 <div className="flex items-center justify-between">
                   <span className="text-secondary-500">Group:</span>
                   <span className="font-medium text-secondary-700 truncate ml-2">{project.group.name}</span>
+                </div>
+              )}
+              {project.lastEditor && project.lastEditedAt && (
+                <div className="flex items-center justify-between">
+                  <span className="text-secondary-500">Last edited:</span>
+                  <span className="font-medium text-secondary-700">
+                    {project.lastEditor.id === user?.id ? 'You' : project.lastEditor.username} on {formatDate(project.lastEditedAt)}
+                  </span>
                 </div>
               )}
             </div>

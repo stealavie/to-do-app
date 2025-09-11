@@ -49,7 +49,7 @@ ehthumbs.db
 Thumbs.db
 
 # Prisma
-prisma/migrations/dev.db*
+prisma/migrations/*
 
 # .github/*
 .github

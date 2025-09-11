@@ -37,6 +37,8 @@ export interface Project {
   assignedTo?: string;
   priority: 'LOW' | 'MEDIUM' | 'HIGH';
   status: 'PLANNING' | 'IN_PROGRESS' | 'DONE';
+  lastEditedBy?: string;
+  lastEditedAt?: string;
   createdAt: string;
   updatedAt?: string;
   groupId: string;
@@ -45,6 +47,11 @@ export interface Project {
     name: string;
   };
   assignedUser?: {
+    id: string;
+    username: string;
+    email: string;
+  };
+  lastEditor?: {
     id: string;
     username: string;
     email: string;

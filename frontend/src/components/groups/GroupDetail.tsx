@@ -33,6 +33,8 @@ export const GroupDetail: React.FC = () => {
   const userMembership = group?.memberships?.find(m => m.user.id === user?.id);
   const userRole: Role = userMembership?.role || 'MEMBER';
   const canManageGroup = userRole === 'OWNER' || userRole === 'ADMIN';
+  // Allow all group members to edit tasks, not just owners/admins
+  const canEditTasks = !!userMembership; // Any member can edit tasks
 
   // Filter projects based on current filters - MOVED TO TOP TO AVOID HOOKS VIOLATION
   const filteredProjects = useMemo(() => {
@@ -439,7 +441,7 @@ export const GroupDetail: React.FC = () => {
         isOpen={!!selectedTask}
         onClose={() => setSelectedTask(null)}
         onUpdate={refetch}
-        canEdit={canManageGroup}
+        canEdit={canEditTasks}
       />
     </div>
   );

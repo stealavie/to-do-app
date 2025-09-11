@@ -138,6 +138,13 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
             email: true
           }
         },
+        lastEditor: {
+          select: {
+            id: true,
+            username: true,
+            email: true
+          }
+        },
         group: {
           select: {
             id: true,
@@ -214,10 +221,19 @@ router.put('/:projectId/assign', authenticate, async (req: AuthenticatedRequest,
         id: projectId
       },
       data: {
-        assignedTo: assignedTo || null
+        assignedTo: assignedTo || null,
+        lastEditedBy: userId,
+        lastEditedAt: new Date()
       },
       include: {
         assignedUser: {
+          select: {
+            id: true,
+            username: true,
+            email: true
+          }
+        },
+        lastEditor: {
           select: {
             id: true,
             username: true,
@@ -317,6 +333,10 @@ router.put('/:projectId', authenticate, async (req: AuthenticatedRequest, res: R
     if (priority !== undefined) updateData.priority = priority;
     if (status !== undefined) updateData.status = status;
 
+    // Track who made the edit and when
+    updateData.lastEditedBy = userId;
+    updateData.lastEditedAt = new Date();
+
     const updatedProject = await prisma.project.update({
       where: {
         id: projectId
@@ -324,6 +344,13 @@ router.put('/:projectId', authenticate, async (req: AuthenticatedRequest, res: R
       data: updateData,
       include: {
         assignedUser: {
+          select: {
+            id: true,
+            username: true,
+            email: true
+          }
+        },
+        lastEditor: {
           select: {
             id: true,
             username: true,

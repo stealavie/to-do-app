@@ -17,9 +17,10 @@ model User {
   createdAt DateTime  @default(now())
 
   // Relations
-  memberships    GroupMembership[]
+  memberships      GroupMembership[]
   assignedProjects Project[]
-  notifications  Notification[]
+  lastEditedProjects Project[] @relation("ProjectLastEditor")
+  notifications    Notification[]
 }
 
 model LearningGroup {
@@ -57,6 +58,8 @@ model Project {
   assignedTo  String?   @map("assigned_to") // User ID of the assigned member
   priority    Priority @default(MEDIUM)
   status      ProjectStatus @default(PLANNING)
+  lastEditedBy String? @map("last_edited_by") // User ID of the last editor
+  lastEditedAt DateTime? @map("last_edited_at") // Timestamp of last edit
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -64,6 +67,7 @@ model Project {
   groupId String        @map("group_id")
   group   LearningGroup @relation(fields: [groupId], references: [id], onDelete: Cascade)
   assignedUser User?    @relation(fields: [assignedTo], references: [id], onDelete: SetNull)
+  lastEditor  User?    @relation("ProjectLastEditor", fields: [lastEditedBy], references: [id], onDelete: SetNull)
 }
 
 // Notification model for tracking user notifications
