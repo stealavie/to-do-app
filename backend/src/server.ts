@@ -4,12 +4,15 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
 
 import authRoutes from './routes/auth';
 import groupRoutes from './routes/groups';
 import projectRoutes from './routes/projects';
 import notificationRoutes from './routes/notifications';
 import { errorHandler, notFound } from './middleware/error';
+import { initializeSocket } from './services/socketService';
 
 // Load environment variables
 dotenv.config();
@@ -64,11 +67,25 @@ app.use(notFound);
 // Global error handler
 app.use(errorHandler);
 
+// Create HTTP server and Socket.IO
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: {
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
+  }
+});
+
+// Initialize Socket.IO
+initializeSocket(io);
+
 // Start server
-app.listen(PORT, () => {
+httpServer.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
+  console.log(`📡 Socket.IO enabled for real-time notifications`);
 });
 
 export default app;
+export { io };

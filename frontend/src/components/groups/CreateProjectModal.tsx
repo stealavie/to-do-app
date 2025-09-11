@@ -21,6 +21,8 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
     title: '',
     description: '',
     dueDate: '',
+    priority: 'MEDIUM',
+    status: 'PLANNING',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -37,7 +39,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
       };
       await projectsApi.createProject(groupId, projectData);
       onSuccess();
-      setFormData({ title: '', description: '', dueDate: '' });
+      setFormData({ title: '', description: '', dueDate: '', priority: 'MEDIUM', status: 'PLANNING' });
     } catch (error: any) {
       setError(error.response?.data?.error || 'Failed to create project');
     } finally {
@@ -46,7 +48,7 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   };
 
   const handleClose = () => {
-    setFormData({ title: '', description: '', dueDate: '' });
+    setFormData({ title: '', description: '', dueDate: '', priority: 'MEDIUM', status: 'PLANNING' });
     setError('');
     onClose();
   };
@@ -100,6 +102,40 @@ export const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="priority" className="block text-sm font-medium text-gray-700 mb-1">
+                Priority
+              </label>
+              <select
+                id="priority"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                value={formData.priority}
+                onChange={(e) => setFormData({ ...formData, priority: e.target.value as 'LOW' | 'MEDIUM' | 'HIGH' })}
+              >
+                <option value="LOW">Low Priority</option>
+                <option value="MEDIUM">Medium Priority</option>
+                <option value="HIGH">High Priority</option>
+              </select>
+            </div>
+
+            <div>
+              <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                Status
+              </label>
+              <select
+                id="status"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                value={formData.status}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value as 'PLANNING' | 'IN_PROGRESS' | 'DONE' })}
+              >
+                <option value="PLANNING">Planning</option>
+                <option value="IN_PROGRESS">In Progress</option>
+                <option value="DONE">Completed</option>
+              </select>
+            </div>
           </div>
 
           <div>

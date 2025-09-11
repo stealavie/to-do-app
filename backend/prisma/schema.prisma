@@ -55,7 +55,10 @@ model Project {
   description String?
   dueDate     DateTime? @map("due_date")
   assignedTo  String?   @map("assigned_to") // User ID of the assigned member
+  priority    Priority @default(MEDIUM)
+  status      ProjectStatus @default(PLANNING)
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   // Relations
   groupId String        @map("group_id")
@@ -93,9 +96,22 @@ enum Role {
   MEMBER
 }
 
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ProjectStatus {
+  PLANNING
+  IN_PROGRESS
+  DONE
+}
+
 enum NotificationType {
   TASK_ASSIGNED
   DEADLINE_APPROACHING
   GROUP_INVITATION
   PROJECT_UPDATED
+  STATUS_CHANGED
 }

@@ -48,7 +48,9 @@ export const createProjectSchema = z.object({
         throw new Error('Invalid date format');
       }
     }
-  })
+  }),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).default('MEDIUM').optional(),
+  status: z.enum(['PLANNING', 'IN_PROGRESS', 'DONE']).default('PLANNING').optional()
 });
 
 // For updating projects - allows partial updates
@@ -73,7 +75,9 @@ export const updateProjectSchema = z.object({
         throw new Error('Invalid date format');
       }
     }
-  })
+  }),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']).optional(),
+  status: z.enum(['PLANNING', 'IN_PROGRESS', 'DONE']).optional()
 });
 
 export type RegisterInput = z.infer<typeof registerSchema>;

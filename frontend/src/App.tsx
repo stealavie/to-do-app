@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
+import { SocketProvider } from './contexts/SocketContext';
 import { Header } from './components/layout/Header';
 import { Dashboard } from './components/Dashboard';
 import { Login } from './components/auth/Login';
@@ -90,9 +91,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <NotificationProvider>
-          <AppContent />
-        </NotificationProvider>
+        <SocketProvider>
+          <NotificationProvider>
+            <AppContent />
+          </NotificationProvider>
+        </SocketProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

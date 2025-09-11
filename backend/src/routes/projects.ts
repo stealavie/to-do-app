@@ -10,7 +10,7 @@ const router = Router({ mergeParams: true });
 router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { groupId } = req.params;
-    const { title, description, dueDate } = createProjectSchema.parse(req.body);
+    const { title, description, dueDate, priority, status } = createProjectSchema.parse(req.body);
     const userId = req.user!.userId;
 
     // Debug logging
@@ -51,6 +51,8 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
         title,
         description,
         dueDate: dueDate ? new Date(dueDate) : null,
+        priority: priority || 'MEDIUM',
+        status: status || 'PLANNING',
         groupId
       },
       include: {
@@ -76,6 +78,7 @@ router.post('/', authenticate, async (req: AuthenticatedRequest, res: Response) 
 router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { groupId } = req.params;
+    const { filter, priority, status } = req.query;
     const userId = req.user!.userId;
 
     // Validate that groupId exists
@@ -101,11 +104,29 @@ router.get('/', authenticate, async (req: AuthenticatedRequest, res: Response) =
       });
     }
 
-    // Get all projects for the group
+    // Build filter conditions
+    const whereClause: any = {
+      groupId
+    };
+
+    // Filter by assignment
+    if (filter === 'my') {
+      whereClause.assignedTo = userId;
+    }
+
+    // Filter by priority
+    if (priority && ['LOW', 'MEDIUM', 'HIGH'].includes(priority as string)) {
+      whereClause.priority = priority;
+    }
+
+    // Filter by status
+    if (status && ['PLANNING', 'IN_PROGRESS', 'DONE'].includes(status as string)) {
+      whereClause.status = status;
+    }
+
+    // Get projects with filters applied
     const projects = await prisma.project.findMany({
-      where: {
-        groupId
-      },
+      where: whereClause,
       orderBy: {
         createdAt: 'desc'
       },
@@ -248,7 +269,7 @@ router.put('/:projectId/assign', authenticate, async (req: AuthenticatedRequest,
 router.put('/:projectId', authenticate, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { groupId, projectId } = req.params;
-    const { title, description, dueDate } = updateProjectSchema.parse(req.body);
+    const { title, description, dueDate, priority, status } = updateProjectSchema.parse(req.body);
     const userId = req.user!.userId;
 
     // Validate that groupId and projectId exist
@@ -293,6 +314,8 @@ router.put('/:projectId', authenticate, async (req: AuthenticatedRequest, res: R
     if (title !== undefined) updateData.title = title;
     if (description !== undefined) updateData.description = description;
     if (dueDate !== undefined) updateData.dueDate = dueDate ? new Date(dueDate) : null;
+    if (priority !== undefined) updateData.priority = priority;
+    if (status !== undefined) updateData.status = status;
 
     const updatedProject = await prisma.project.update({
       where: {
@@ -377,6 +400,173 @@ router.delete('/:projectId', authenticate, async (req: AuthenticatedRequest, res
 
     res.json({
       message: 'Project deleted successfully'
+    });
+  } catch (error) {
+    throw error;
+  }
+});
+
+// PUT /api/groups/:groupId/projects/:projectId/priority - Update project priority
+router.put('/:projectId/priority', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { groupId, projectId } = req.params;
+    const { priority } = req.body;
+    const userId = req.user!.userId;
+
+    // Validate priority
+    if (!priority || !['LOW', 'MEDIUM', 'HIGH'].includes(priority)) {
+      return res.status(400).json({
+        error: 'Valid priority is required (LOW, MEDIUM, HIGH)'
+      });
+    }
+
+    // Check if user is a member of the group
+    const membership = await prisma.groupMembership.findUnique({
+      where: {
+        userId_groupId: {
+          userId,
+          groupId: groupId
+        }
+      }
+    });
+
+    if (!membership) {
+      return res.status(403).json({
+        error: 'You are not a member of this group'
+      });
+    }
+
+    // Update project priority
+    const updatedProject = await prisma.project.update({
+      where: {
+        id: projectId,
+        groupId: groupId
+      },
+      data: {
+        priority
+      },
+      include: {
+        assignedUser: {
+          select: {
+            id: true,
+            username: true,
+            email: true
+          }
+        },
+        group: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+    });
+
+    res.json({
+      message: 'Project priority updated successfully',
+      project: updatedProject
+    });
+  } catch (error) {
+    throw error;
+  }
+});
+
+// PUT /api/groups/:groupId/projects/:projectId/status - Update project status
+router.put('/:projectId/status', authenticate, async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { groupId, projectId } = req.params;
+    const { status } = req.body;
+    const userId = req.user!.userId;
+
+    // Validate status
+    if (!status || !['PLANNING', 'IN_PROGRESS', 'DONE'].includes(status)) {
+      return res.status(400).json({
+        error: 'Valid status is required (PLANNING, IN_PROGRESS, DONE)'
+      });
+    }
+
+    // Check if user is a member of the group
+    const membership = await prisma.groupMembership.findUnique({
+      where: {
+        userId_groupId: {
+          userId,
+          groupId: groupId
+        }
+      }
+    });
+
+    if (!membership) {
+      return res.status(403).json({
+        error: 'You are not a member of this group'
+      });
+    }
+
+    // Get project details for notification
+    const existingProject = await prisma.project.findFirst({
+      where: {
+        id: projectId,
+        groupId: groupId
+      },
+      include: {
+        assignedUser: true,
+        group: true
+      }
+    });
+
+    if (!existingProject) {
+      return res.status(404).json({
+        error: 'Project not found'
+      });
+    }
+
+    // Update project status
+    const updatedProject = await prisma.project.update({
+      where: {
+        id: projectId
+      },
+      data: {
+        status
+      },
+      include: {
+        assignedUser: {
+          select: {
+            id: true,
+            username: true,
+            email: true
+          }
+        },
+        group: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
+    });
+
+    // Create notification for status change if project is assigned
+    if (existingProject.assignedUser && status === 'DONE') {
+      await prisma.notification.create({
+        data: {
+          userId: existingProject.assignedUser.id,
+          type: 'STATUS_CHANGED',
+          title: 'Project Completed',
+          message: `Project "${existingProject.title}" has been marked as completed`,
+          projectId: projectId,
+          groupId: groupId,
+          metadata: {
+            previousStatus: existingProject.status,
+            newStatus: status,
+            projectTitle: existingProject.title,
+            groupName: existingProject.group.name
+          }
+        }
+      });
+    }
+
+    res.json({
+      message: 'Project status updated successfully',
+      project: updatedProject
     });
   } catch (error) {
     throw error;

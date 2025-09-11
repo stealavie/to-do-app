@@ -38,7 +38,6 @@ async function main() {
     data: {
       name: 'Web Development Study Group',
       description: 'A group for learning modern web development technologies',
-      isPublic: true,
       memberships: {
         create: [
           {

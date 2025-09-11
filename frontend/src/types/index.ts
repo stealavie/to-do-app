@@ -35,7 +35,10 @@ export interface Project {
   description?: string;
   dueDate?: string;
   assignedTo?: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  status: 'PLANNING' | 'IN_PROGRESS' | 'DONE';
   createdAt: string;
+  updatedAt?: string;
   groupId: string;
   group?: {
     id: string;
@@ -88,6 +91,8 @@ export interface CreateProjectRequest {
   title: string;
   description?: string;
   dueDate?: string;
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH';
+  status?: 'PLANNING' | 'IN_PROGRESS' | 'DONE';
 }
 
 // API Response Types

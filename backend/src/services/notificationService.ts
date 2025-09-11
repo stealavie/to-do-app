@@ -1,5 +1,6 @@
 import { prisma } from '../lib/prisma';
 import type { NotificationType } from '@prisma/client';
+import { emitNotification } from './socketService';
 
 export interface CreateNotificationData {
   userId: string;
@@ -12,7 +13,7 @@ export interface CreateNotificationData {
 }
 
 /**
- * Create a new notification in the database
+ * Create a new notification in the database and emit real-time event
  */
 export const createNotification = async (data: CreateNotificationData) => {
   try {
@@ -27,6 +28,9 @@ export const createNotification = async (data: CreateNotificationData) => {
         metadata: data.metadata,
       },
     });
+
+    // Emit real-time notification
+    emitNotification(data.userId, notification);
 
     return notification;
   } catch (error) {
