@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import { prisma } from '../lib/prisma';
 import { authenticate, AuthenticatedRequest } from '../middleware/auth';
 import { createProjectSchema, updateProjectSchema } from '../schemas/validation';
+import { createTaskAssignmentNotification } from '../services/notificationService';
 
 const router = Router({ mergeParams: true });
 
@@ -210,6 +211,29 @@ router.put('/:projectId/assign', authenticate, async (req: AuthenticatedRequest,
         }
       }
     });
+
+    // Create notification for task assignment (only if assigning, not unassigning)
+    if (assignedTo && assignedTo !== existingProject.assignedTo) {
+      try {
+        // Get the username of the user who is doing the assignment
+        const assigningUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { username: true }
+        });
+
+        await createTaskAssignmentNotification(
+          assignedTo,
+          updatedProject.title,
+          assigningUser?.username,
+          updatedProject.id,
+          updatedProject.groupId,
+          updatedProject.group?.name
+        );
+      } catch (notificationError) {
+        console.error('Error creating task assignment notification:', notificationError);
+        // Don't fail the assignment if notification creation fails
+      }
+    }
 
     res.json({
       message: assignedTo ? 'Project assigned successfully' : 'Project unassigned successfully',

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Users, LogOut, User } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { NotificationBell } from '../ui/NotificationBell';
 
 export const Header: React.FC = () => {
   const { user, logout, isAuthenticated } = useAuth();
@@ -32,6 +33,9 @@ export const Header: React.FC = () => {
 
         {/* User Menu */}
         <div className="flex items-center space-x-6">
+          {/* Notification Bell */}
+          <NotificationBell />
+          
           <div className="flex items-center space-x-3 bg-secondary-50 px-4 py-2.5 rounded-2xl border border-secondary-200/50">
             <div className="bg-primary-100 p-1.5 rounded-xl">
               <User className="w-4 h-4 text-primary-600" />

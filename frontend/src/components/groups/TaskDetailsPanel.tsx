@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Calendar, User, Trash2, Save } from 'lucide-react';
 import { projectsApi } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotifications } from '../../contexts/NotificationContext';
 import { Button } from '../ui/Button';
 import type { Project, GroupMembership } from '../../types';
 
@@ -23,6 +24,7 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
   canEdit
 }) => {
   const { user } = useAuth();
+  const notificationContext = useNotifications() as any; // Cast to access helper functions
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -89,6 +91,13 @@ export const TaskDetailsPanel: React.FC<TaskDetailsPanelProps> = ({
       // Update assignment if changed
       if (formData.assignedTo !== project.assignedTo) {
         await projectsApi.assignProject(project.groupId, project.id, formData.assignedTo || undefined);
+        
+        // Refresh notifications after assignment to get the new notification from backend
+        if (notificationContext.refreshNotifications) {
+          setTimeout(() => {
+            notificationContext.refreshNotifications();
+          }, 1000); // Small delay to ensure backend has processed the notification
+        }
       }
       
       onUpdate();

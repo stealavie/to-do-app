@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Plus, Users, Settings, Copy, Calendar, BookOpen } from 'lucide-react';
 import { groupsApi } from '../../services/api';
@@ -14,6 +14,7 @@ import type { LearningGroup, Project, Role } from '../../types';
 export const GroupDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const [showCreateProjectModal, setShowCreateProjectModal] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -46,6 +47,19 @@ export const GroupDetail: React.FC = () => {
     setShowCreateProjectModal(false);
     refetch();
   };
+
+  // Handle automatic project selection from URL parameters (for notifications)
+  useEffect(() => {
+    const projectId = searchParams.get('projectId');
+    if (projectId && group?.projects) {
+      const project = group.projects.find(p => p.id === projectId);
+      if (project) {
+        setSelectedTask(project);
+        // Clear the search parameter to clean up the URL
+        setSearchParams(new URLSearchParams());
+      }
+    }
+  }, [group?.projects, searchParams, setSearchParams]);
 
   if (isLoading) {
     return <LoadingSpinner />;

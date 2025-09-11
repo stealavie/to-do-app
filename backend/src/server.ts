@@ -8,6 +8,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import groupRoutes from './routes/groups';
 import projectRoutes from './routes/projects';
+import notificationRoutes from './routes/notifications';
 import { errorHandler, notFound } from './middleware/error';
 
 // Load environment variables
@@ -52,6 +53,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/groups', groupRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Projects routes are nested under groups - using param merging
 app.use('/api/groups/:groupId/projects', projectRoutes);

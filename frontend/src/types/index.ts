@@ -104,3 +104,38 @@ export interface GroupsResponse {
 export interface ProjectsResponse {
   projects: Project[];
 }
+
+// Notification Types
+export const NotificationType = {
+  TASK_ASSIGNED: 'TASK_ASSIGNED',
+  DEADLINE_APPROACHING: 'DEADLINE_APPROACHING'
+} as const;
+
+export type NotificationType = typeof NotificationType[keyof typeof NotificationType];
+
+export interface Notification {
+  id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+  projectId?: string;
+  groupId?: string;
+  metadata?: {
+    assignedBy?: string;
+    projectTitle?: string;
+    groupName?: string;
+    dueDate?: string;
+  };
+}
+
+export interface NotificationContext {
+  notifications: Notification[];
+  unreadCount: number;
+  addNotification: (notification: Omit<Notification, 'id' | 'createdAt' | 'isRead'>) => void;
+  markAsRead: (notificationId: string) => void;
+  markAllAsRead: () => void;
+  removeNotification: (notificationId: string) => void;
+  clearAllNotifications: () => void;
+}
