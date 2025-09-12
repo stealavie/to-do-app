@@ -59,6 +59,19 @@ export const authApi = {
     const response: AxiosResponse<AuthResponse> = await api.post('/api/auth/register', data);
     return response.data;
   },
+
+  async updateUsername(username: string): Promise<{ message: string; user: any }> {
+    const response = await api.put('/api/auth/update-username', { username });
+    return response.data;
+  },
+
+  async updatePassword(currentPassword: string, newPassword: string): Promise<{ message: string }> {
+    const response = await api.put('/api/auth/update-password', { 
+      currentPassword, 
+      newPassword 
+    });
+    return response.data;
+  },
 };
 
 // Groups API

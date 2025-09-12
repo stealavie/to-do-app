@@ -12,6 +12,16 @@ export const loginSchema = z.object({
   password: z.string().min(1, 'Password is required')
 });
 
+// User account update schemas
+export const updateUsernameSchema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters').max(30, 'Username must be less than 30 characters')
+});
+
+export const updatePasswordSchema = z.object({
+  currentPassword: z.string().min(1, 'Current password is required'),
+  newPassword: z.string().min(6, 'New password must be at least 6 characters')
+});
+
 // Learning Group schemas
 export const createGroupSchema = z.object({
   name: z.string().min(1, 'Group name is required').max(100, 'Group name must be less than 100 characters'),
@@ -82,6 +92,8 @@ export const updateProjectSchema = z.object({
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type UpdateUsernameInput = z.infer<typeof updateUsernameSchema>;
+export type UpdatePasswordInput = z.infer<typeof updatePasswordSchema>;
 export type CreateGroupInput = z.infer<typeof createGroupSchema>;
 export type JoinGroupInput = z.infer<typeof joinGroupSchema>;
 export type InviteUserInput = z.infer<typeof inviteUserSchema>;

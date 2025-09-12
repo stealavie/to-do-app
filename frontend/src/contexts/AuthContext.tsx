@@ -65,12 +65,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setUser(null);
   };
 
+  const updateUser = (updatedUser: User) => {
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+    setUser(updatedUser);
+  };
+
   const value = {
     user,
     loading,
     login,
     register,
     logout,
+    updateUser,
     isAuthenticated: !!user,
   };
 
