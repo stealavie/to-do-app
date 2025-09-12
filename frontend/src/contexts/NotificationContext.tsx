@@ -24,7 +24,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     try {
       const { notifications: fetchedNotifications } = await notificationsApi.getNotifications();
       // Convert backend notifications to frontend format if needed
-      const formattedNotifications: Notification[] = fetchedNotifications.map((notif: Notification) => ({
+      const formattedNotifications: Notification[] = fetchedNotifications.map((notif: any) => ({
         id: notif.id,
         type: notif.type,
         title: notif.title,

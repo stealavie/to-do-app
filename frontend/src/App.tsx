@@ -5,6 +5,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { SocketProvider } from './contexts/SocketContext';
+import { ChatProvider } from './contexts/ChatContext';
 import { Header } from './components/layout/Header';
 import { Dashboard } from './components/Dashboard';
 import { Login } from './components/auth/Login';
@@ -12,6 +13,7 @@ import { Register } from './components/auth/Register';
 import { GroupDetail } from './components/groups/GroupDetail';
 import { AccountDetails } from './components/AccountDetails';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
+import { Chat } from './components/chat/Chat';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +45,8 @@ const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 };
 
 const AppContent: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-white to-primary-50">
@@ -92,6 +96,9 @@ const AppContent: React.FC = () => {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
+        
+        {/* Chat component - only show for authenticated users */}
+        {isAuthenticated && <Chat />}
       </div>
     </Router>
   );
@@ -103,7 +110,9 @@ function App() {
       <AuthProvider>
         <SocketProvider>
           <NotificationProvider>
-            <AppContent />
+            <ChatProvider>
+              <AppContent />
+            </ChatProvider>
           </NotificationProvider>
         </SocketProvider>
       </AuthProvider>
