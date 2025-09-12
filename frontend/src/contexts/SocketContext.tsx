@@ -76,7 +76,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
         setIsConnected(false);
       }
     }
-  }, [token, user, socket]);
+  }, [token, user]);
 
   const value = {
     socket,

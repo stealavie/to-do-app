@@ -10,6 +10,7 @@ import { Dashboard } from './components/Dashboard';
 import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
 import { GroupDetail } from './components/groups/GroupDetail';
+import { AccountDetails } from './components/AccountDetails';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
 
 const queryClient = new QueryClient({
@@ -61,6 +62,14 @@ const AppContent: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <GroupDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute>
+                  <AccountDetails />
                 </ProtectedRoute>
               }
             />
