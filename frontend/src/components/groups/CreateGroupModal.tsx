@@ -31,8 +31,9 @@ export const CreateGroupModal: React.FC<CreateGroupModalProps> = ({
       await groupsApi.createGroup(formData);
       onSuccess();
       setFormData({ name: '', description: '' });
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to create group');
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      setError(axiosError.response?.data?.error || 'Failed to create group');
     } finally {
       setLoading(false);
     }

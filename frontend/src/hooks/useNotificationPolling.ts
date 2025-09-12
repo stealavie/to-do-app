@@ -1,12 +1,13 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { useNotifications } from '../contexts/NotificationContext';
+import { useAuth } from './useAuth';
+import { useNotifications } from './useNotifications';
 import { groupsApi, projectsApi } from '../services/api';
+import type { Project } from '../types';
 
 export const useNotificationPolling = () => {
   const { user, isAuthenticated } = useAuth();
-  const notificationContext = useNotifications() as any;
-  const previousProjectsRef = useRef<Record<string, any>>({});
+  const notificationContext = useNotifications();
+  const previousProjectsRef = useRef<Record<string, Project>>({});
 
   // Helper function to check if a date is within 24 hours
   const isWithin24Hours = (date: string): boolean => {
@@ -22,7 +23,7 @@ export const useNotificationPolling = () => {
     try {
       // Get user's groups
       const { groups } = await groupsApi.getUserGroups();
-      const currentProjects: Record<string, any> = {};
+      const currentProjects: Record<string, Project> = {};
 
       for (const group of groups) {
         try {
@@ -40,22 +41,29 @@ export const useNotificationPolling = () => {
               // Check if assignment changed and current user is now assigned
               if (
                 project.assignedTo === user.id && 
-                previousProject.assignedTo !== user.id &&
-                notificationContext.generateTaskAssignedNotification
+                previousProject.assignedTo !== user.id
               ) {
                 // Check if we already have a recent notification for this assignment
                 const existingNotification = notificationContext.notifications.find(
-                  (n: any) => 
+                  (n) => 
                     n.type === 'TASK_ASSIGNED' && 
                     n.projectId === project.id &&
                     new Date(n.createdAt) > new Date(Date.now() - 5 * 60 * 1000) // Within last 5 minutes
                 );
 
                 if (!existingNotification) {
-                  notificationContext.generateTaskAssignedNotification(
-                    { ...project, group: { id: group.id, name: group.name } },
-                    'System' // We don't know who assigned it in polling
-                  );
+                  notificationContext.addNotification({
+                    type: 'TASK_ASSIGNED',
+                    title: `Task Assigned`,
+                    message: `You have been assigned to "${project.title}"`,
+                    projectId: project.id,
+                    groupId: group.id,
+                    metadata: {
+                      assignedBy: 'System',
+                      projectTitle: project.title,
+                      groupName: group.name,
+                    },
+                  });
                 }
               }
             }
@@ -64,21 +72,28 @@ export const useNotificationPolling = () => {
             if (
               project.assignedTo === user.id && 
               project.dueDate && 
-              isWithin24Hours(project.dueDate) &&
-              notificationContext.generateDeadlineNotification
+              isWithin24Hours(project.dueDate)
             ) {
               // Check if we already have a notification for this deadline
               const existingDeadlineNotification = notificationContext.notifications.find(
-                (n: any) => 
+                (n) => 
                   n.type === 'DEADLINE_APPROACHING' && 
                   n.projectId === project.id &&
                   new Date(n.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000) // Within last 24 hours
               );
 
               if (!existingDeadlineNotification) {
-                notificationContext.generateDeadlineNotification({
-                  ...project,
-                  group: { id: group.id, name: group.name }
+                notificationContext.addNotification({
+                  type: 'DEADLINE_APPROACHING',
+                  title: `Deadline Approaching`,
+                  message: `Project "${project.title}" is due within 24 hours`,
+                  projectId: project.id,
+                  groupId: group.id,
+                  metadata: {
+                    projectTitle: project.title,
+                    groupName: group.name,
+                    dueDate: project.dueDate,
+                  },
                 });
               }
             }

@@ -27,8 +27,9 @@ export const JoinGroupModal: React.FC<JoinGroupModalProps> = ({
       await groupsApi.joinGroup({ inviteCode: inviteCode.trim() });
       onSuccess();
       setInviteCode('');
-    } catch (error: any) {
-      setError(error.response?.data?.error || 'Failed to join group');
+    } catch (error: unknown) {
+      const axiosError = error as { response?: { data?: { error?: string } } };
+      setError(axiosError.response?.data?.error || 'Failed to join group');
     } finally {
       setLoading(false);
     }

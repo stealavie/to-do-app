@@ -35,13 +35,23 @@ export interface Project {
   description?: string;
   dueDate?: string;
   assignedTo?: string;
+  priority: 'LOW' | 'MEDIUM' | 'HIGH';
+  status: 'PLANNING' | 'IN_PROGRESS' | 'DONE';
+  lastEditedBy?: string;
+  lastEditedAt?: string;
   createdAt: string;
+  updatedAt?: string;
   groupId: string;
   group?: {
     id: string;
     name: string;
   };
   assignedUser?: {
+    id: string;
+    username: string;
+    email: string;
+  };
+  lastEditor?: {
     id: string;
     username: string;
     email: string;
@@ -88,6 +98,8 @@ export interface CreateProjectRequest {
   title: string;
   description?: string;
   dueDate?: string;
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH';
+  status?: 'PLANNING' | 'IN_PROGRESS' | 'DONE';
 }
 
 // API Response Types
@@ -138,4 +150,6 @@ export interface NotificationContext {
   markAllAsRead: () => void;
   removeNotification: (notificationId: string) => void;
   clearAllNotifications: () => void;
+  refreshNotifications?: () => void;
+  loading?: boolean;
 }

@@ -1,17 +1,8 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from 'react';
+import React, { useState, useEffect, useCallback, type ReactNode } from 'react';
 import type { Notification, NotificationContext as INotificationContext } from '../types';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../hooks/useAuth';
 import { notificationsApi } from '../services/api';
-
-const NotificationContext = createContext<INotificationContext | undefined>(undefined);
-
-export const useNotifications = () => {
-  const context = useContext(NotificationContext);
-  if (context === undefined) {
-    throw new Error('useNotifications must be used within a NotificationProvider');
-  }
-  return context;
-};
+import { NotificationContext } from './NotificationContextDefinition';
 
 interface NotificationProviderProps {
   children: ReactNode;
@@ -33,7 +24,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     try {
       const { notifications: fetchedNotifications } = await notificationsApi.getNotifications();
       // Convert backend notifications to frontend format if needed
-      const formattedNotifications: Notification[] = fetchedNotifications.map((notif: any) => ({
+      const formattedNotifications: Notification[] = fetchedNotifications.map((notif: Notification) => ({
         id: notif.id,
         type: notif.type,
         title: notif.title,
@@ -137,11 +128,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     markAllAsRead,
     removeNotification,
     clearAllNotifications,
+    refreshNotifications,
+    loading,
   };
-
-  // Expose additional methods for external use
-  (contextValue as any).refreshNotifications = refreshNotifications;
-  (contextValue as any).loading = loading;
 
   return (
     <NotificationContext.Provider value={contextValue}>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Users, Lock, Globe, Calendar, BookOpen } from 'lucide-react';
+import { Users, Lock, Calendar, BookOpen } from 'lucide-react';
 import type { LearningGroup } from '../../types';
 
 interface GroupCardProps {
@@ -25,15 +25,9 @@ export const GroupCard: React.FC<GroupCardProps> = ({ group }) => {
               <h3 className="font-semibold text-lg text-gray-900 truncate">
                 {group.name}
               </h3>
-              {group.isPublic ? (
-                <div title="Public group">
-                  <Globe className="w-4 h-4 text-green-600" />
-                </div>
-              ) : (
-                <div title="Private group">
-                  <Lock className="w-4 h-4 text-gray-500" />
-                </div>
-              )}
+              <div title="Private group">
+                <Lock className="w-4 h-4 text-gray-500" />
+              </div>
             </div>
             {group.description && (
               <p className="text-gray-600 text-sm line-clamp-2 mb-3">
