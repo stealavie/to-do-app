@@ -18,7 +18,10 @@
 **Frontend**
 1. Navigate to the `frontend` directory: `cd frontend`
 2. Install dependencies: `npm install`
-3. Create a `.env` file with the backend API URL: `echo "VITE_API_URL=http://localhost:3000" > .env`
+3. Create a `.env` file in the `frontend` directory and add the following line:
+   ```
+   VITE_API_URL=http://localhost:3000
+   ```
 4. Start the development server: `npm run dev`
 
 
