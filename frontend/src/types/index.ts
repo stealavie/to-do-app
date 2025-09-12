@@ -153,3 +153,14 @@ export interface NotificationContext {
   refreshNotifications?: () => void;
   loading?: boolean;
 }
+
+// Chat API Types
+export interface ChatMessageRequest {
+  message: string;
+  apiKey: string;
+}
+
+export interface ChatMessageResponse {
+  message: string;
+  timestamp: string;
+}
