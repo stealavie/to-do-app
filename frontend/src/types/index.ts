@@ -192,3 +192,32 @@ export interface TaskStats {
   done: number;
   total: number;
 }
+
+// Smart To-Do List Analytics Types
+export interface AnalyticsData {
+  tasksCompletedLast7Days: {
+    day: string;
+    count: number;
+  }[];
+  productivityByHour: {
+    hour: string;
+    completed: number;
+  }[];
+}
+
+// Enhanced Task/Project type with Smart To-Do features
+export interface SmartTask extends Project {
+  realisticDeadline?: string; // AI-calculated realistic deadline
+  urgencyLevel: 'low' | 'medium' | 'high'; // Based on proximity to due date
+  completionProbability?: number; // AI prediction (0-1)
+}
+
+// Calendar Event type for react-big-calendar
+export interface CalendarEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  resource: SmartTask;
+  allDay?: boolean;
+}

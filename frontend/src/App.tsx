@@ -1,12 +1,16 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
 import { AuthProvider } from './contexts/AuthContext';
 import { useAuth } from './hooks/useAuth';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { SocketProvider } from './contexts/SocketContext';
 import { ChatProvider } from './contexts/ChatContext';
+import { muiTheme } from './theme/mui-theme';
 import { Header } from './components/layout/Header';
+import SmartTodoNavigation from './components/layout/SmartTodoNavigation';
 import { Dashboard } from './components/Dashboard';
 import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
@@ -14,6 +18,8 @@ import { GroupDetail } from './components/groups/GroupDetail';
 import { AccountDetails } from './components/AccountDetails';
 import { LoadingSpinner } from './components/ui/LoadingSpinner';
 import { Chat } from './components/chat/Chat';
+import { DashboardView, CalendarView, AnalyticsView } from './components/smart-todo';
+import SmartTodoDemo from './components/smart-todo/SmartTodoDemo';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,6 +57,7 @@ const AppContent: React.FC = () => {
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-white to-primary-50">
         <Header />
+        {isAuthenticated && <SmartTodoNavigation />}
         <main className="container mx-auto px-6 py-10">
           <Routes>
             <Route
@@ -74,6 +81,39 @@ const AppContent: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <AccountDetails />
+                </ProtectedRoute>
+              }
+            />
+            {/* Smart To-Do List Routes */}
+            <Route
+              path="/smart-todo"
+              element={
+                <ProtectedRoute>
+                  <SmartTodoDemo />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/tasks"
+              element={
+                <ProtectedRoute>
+                  <DashboardView />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/calendar"
+              element={
+                <ProtectedRoute>
+                  <CalendarView />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/analytics"
+              element={
+                <ProtectedRoute>
+                  <AnalyticsView />
                 </ProtectedRoute>
               }
             />
@@ -107,15 +147,18 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <SocketProvider>
-          <NotificationProvider>
-            <ChatProvider>
-              <AppContent />
-            </ChatProvider>
-          </NotificationProvider>
-        </SocketProvider>
-      </AuthProvider>
+      <ThemeProvider theme={muiTheme}>
+        <CssBaseline />
+        <AuthProvider>
+          <SocketProvider>
+            <NotificationProvider>
+              <ChatProvider>
+                <AppContent />
+              </ChatProvider>
+            </NotificationProvider>
+          </SocketProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }

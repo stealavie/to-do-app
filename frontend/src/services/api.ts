@@ -11,6 +11,7 @@ import type {
   ChatMessageResponse,
   TasksResponse,
   TaskStats,
+  AnalyticsData,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -218,6 +219,11 @@ export const tasksApi = {
 
   async getTaskStats(): Promise<TaskStats> {
     const response = await api.get('/api/tasks/stats');
+    return response.data;
+  },
+
+  async getAnalytics(): Promise<AnalyticsData> {
+    const response = await api.get('/api/analytics');
     return response.data;
   },
 };
