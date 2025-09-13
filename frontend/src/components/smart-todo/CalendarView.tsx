@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import type { View } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay, parseISO, addMonths, addWeeks, subMonths, subWeeks, startOfMonth, startOfWeek as startOfWeekFn } from 'date-fns';
+import { format, parse, startOfWeek, getDay, parseISO, addMonths, addWeeks, subMonths, subWeeks } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import {
   Box,

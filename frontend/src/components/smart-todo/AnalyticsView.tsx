@@ -5,7 +5,6 @@ import {
   Typography,
   Card,
   CardContent,
-  Grid,
   CircularProgress,
   Alert,
   Paper,
@@ -20,8 +19,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  LineChart,
-  Line,
   Area,
   AreaChart,
   PieChart,
@@ -48,7 +45,7 @@ const COLORS = {
   info: '#00bcd4',
 };
 
-const CHART_COLORS = [COLORS.primary, COLORS.secondary, COLORS.success, COLORS.warning, COLORS.error, COLORS.info];
+
 
 interface MetricCardProps {
   title: string;
@@ -76,7 +73,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, icon, color, desc
           )}
         </Box>
         <Box sx={{ color, opacity: 0.8 }}>
-          {React.cloneElement(icon, { fontSize: 'large' })}
+          {React.cloneElement(icon, { fontSize: 'large' } as any)}
         </Box>
       </Box>
     </CardContent>
@@ -187,235 +184,230 @@ const AnalyticsView: React.FC = () => {
       </Typography>
 
       {/* Key Metrics Cards */}
-      <Grid container spacing={3} sx={{ mb: 4 }}>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Total Tasks"
-            value={taskStats?.total || 0}
-            icon={<AssignmentIcon />}
-            color={COLORS.primary}
-            description="All tasks in system"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Completed"
-            value={taskStats?.done || 0}
-            icon={<CheckCircleIcon />}
-            color={COLORS.success}
-            description="Successfully finished"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Weekly Average"
-            value={averageTasksPerDay}
-            icon={<TrendingUpIcon />}
-            color={COLORS.info}
-            description="Tasks per day"
-          />
-        </Grid>
-        <Grid item xs={12} sm={6} md={3}>
-          <MetricCard
-            title="Peak Hour"
-            value={peakProductivityHour}
-            icon={<ScheduleIcon />}
-            color={COLORS.secondary}
-            description="Most productive time"
-          />
-        </Grid>
-      </Grid>
+      <Box 
+        sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr' },
+          gap: 3,
+          mb: 4 
+        }}
+      >
+        <MetricCard
+          title="Total Tasks"
+          value={taskStats?.total || 0}
+          icon={<AssignmentIcon />}
+          color={COLORS.primary}
+          description="All tasks in system"
+        />
+        <MetricCard
+          title="Completed"
+          value={taskStats?.done || 0}
+          icon={<CheckCircleIcon />}
+          color={COLORS.success}
+          description="Successfully finished"
+        />
+        <MetricCard
+          title="Weekly Average"
+          value={averageTasksPerDay}
+          icon={<TrendingUpIcon />}
+          color={COLORS.info}
+          description="Tasks per day"
+        />
+        <MetricCard
+          title="Peak Hour"
+          value={peakProductivityHour}
+          icon={<ScheduleIcon />}
+          color={COLORS.secondary}
+          description="Most productive time"
+        />
+      </Box>
 
-      <Grid container spacing={3}>
+      <Box 
+        sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: { xs: '1fr', lg: '2fr 1fr' },
+          gap: 3 
+        }}
+      >
         {/* Tasks Completed Per Day - Bar Chart */}
-        <Grid item xs={12} lg={8}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Tasks Completed Last 7 Days
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-                Daily task completion trends to track your consistency
-              </Typography>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={displayData.tasksCompletedLast7Days}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="day" 
-                    tick={{ fontSize: 12 }}
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 12 }}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#fff',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                    }}
-                  />
-                  <Legend />
-                  <Bar 
-                    dataKey="count" 
-                    fill={COLORS.primary}
-                    name="Tasks Completed"
-                    radius={[4, 4, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </Grid>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Tasks Completed Last 7 Days
+            </Typography>
+            <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
+              Daily task completion trends to track your consistency
+            </Typography>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={displayData.tasksCompletedLast7Days}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="day" 
+                  tick={{ fontSize: 12 }}
+                />
+                <YAxis 
+                  tick={{ fontSize: 12 }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#fff',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                  }}
+                />
+                <Legend />
+                <Bar 
+                  dataKey="count" 
+                  fill={COLORS.primary}
+                  name="Tasks Completed"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
         {/* Task Status Distribution - Pie Chart */}
-        <Grid item xs={12} lg={4}>
-          <Card sx={{ height: '100%' }}>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Task Status Distribution
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-                Current breakdown of your tasks by status
-              </Typography>
-              {statusDistribution.length > 0 ? (
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart>
-                    <Pie
-                      data={statusDistribution}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={80}
-                      dataKey="value"
-                      label={({ name, value }) => `${name}: ${value}`}
-                      labelLine={false}
-                    >
-                      {statusDistribution.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <Box 
-                  display="flex" 
-                  alignItems="center" 
-                  justifyContent="center" 
-                  height={250}
-                >
-                  <Typography color="textSecondary">
-                    No tasks available
-                  </Typography>
-                </Box>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Productivity Hotspots - Area Chart */}
-        <Grid item xs={12}>
-          <Card>
-            <CardContent>
-              <Typography variant="h6" gutterBottom>
-                Productivity Hotspots
-              </Typography>
-              <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
-                Hourly task completion patterns to identify your most productive times
-              </Typography>
-              <ResponsiveContainer width="100%" height={350}>
-                <AreaChart data={displayData.productivityByHour}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="hour"
-                    tick={{ fontSize: 12 }}
-                    interval="preserveStartEnd"
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 12 }}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#fff',
-                      border: '1px solid #ccc',
-                      borderRadius: '4px',
-                    }}
-                    labelFormatter={(value) => `Time: ${value}`}
-                    formatter={(value: number) => [value, 'Tasks Completed']}
-                  />
-                  <Legend />
-                  <Area
-                    type="monotone"
-                    dataKey="completed"
-                    stroke={COLORS.primary}
-                    fill={COLORS.primary}
-                    fillOpacity={0.3}
-                    name="Tasks Completed"
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        {/* Additional Insights */}
-        <Grid item xs={12}>
-          <Paper sx={{ p: 3 }}>
+        <Card sx={{ height: '100%' }}>
+          <CardContent>
             <Typography variant="h6" gutterBottom>
-              AI Insights & Recommendations
+              Task Status Distribution
             </Typography>
-            <Divider sx={{ mb: 2 }} />
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="subtitle2" color="primary" gutterBottom>
-                    📈 Productivity Trend
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Your peak productivity window is around {peakProductivityHour}. 
-                    Consider scheduling your most important tasks during this time.
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="subtitle2" color="primary" gutterBottom>
-                    🎯 Weekly Performance
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    You completed {totalCompletedLastWeek} tasks this week, averaging {averageTasksPerDay} tasks per day.
-                    {totalCompletedLastWeek > 35 ? ' Excellent consistency!' : ' Room for improvement in daily consistency.'}
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="subtitle2" color="primary" gutterBottom>
-                    ⚡ Optimization Tip
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Your completion rate drops significantly after 18:00. 
-                    Try to finish important tasks earlier in the day for better results.
-                  </Typography>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="subtitle2" color="primary" gutterBottom>
-                    📊 Task Balance
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    {taskStats && taskStats.inProgress > taskStats.planning * 2 
-                      ? 'You have many tasks in progress. Consider focusing on completion before starting new ones.'
-                      : 'Good balance between planning and execution. Keep up the momentum!'}
-                  </Typography>
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
-        </Grid>
-      </Grid>
+            <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
+              Current breakdown of your tasks by status
+            </Typography>
+            {statusDistribution.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={statusDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={80}
+                    dataKey="value"
+                    label={({ name, value }) => `${name}: ${value}`}
+                    labelLine={false}
+                  >
+                    {statusDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <Box 
+                display="flex" 
+                alignItems="center" 
+                justifyContent="center" 
+                height={250}
+              >
+                <Typography color="textSecondary">
+                  No tasks available
+                </Typography>
+              </Box>
+            )}
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* Productivity Hotspots - Area Chart */}
+      <Card sx={{ mb: 3 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Productivity Hotspots
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
+            Hourly task completion patterns to identify your most productive times
+          </Typography>
+          <ResponsiveContainer width="100%" height={350}>
+            <AreaChart data={displayData.productivityByHour}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="hour"
+                tick={{ fontSize: 12 }}
+                interval="preserveStartEnd"
+              />
+              <YAxis 
+                tick={{ fontSize: 12 }}
+              />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#fff',
+                  border: '1px solid #ccc',
+                  borderRadius: '4px',
+                }}
+                labelFormatter={(value) => `Time: ${value}`}
+                formatter={(value: number) => [value, 'Tasks Completed']}
+              />
+              <Legend />
+              <Area
+                type="monotone"
+                dataKey="completed"
+                stroke={COLORS.primary}
+                fill={COLORS.primary}
+                fillOpacity={0.3}
+                name="Tasks Completed"
+                strokeWidth={2}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* Additional Insights */}
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          AI Insights & Recommendations
+        </Typography>
+        <Divider sx={{ mb: 2 }} />
+        <Box 
+          sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+            gap: 2 
+          }}
+        >
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" color="primary" gutterBottom>
+              📈 Productivity Trend
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Your peak productivity window is around {peakProductivityHour}. 
+              Consider scheduling your most important tasks during this time.
+            </Typography>
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" color="primary" gutterBottom>
+              🎯 Weekly Performance
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              You completed {totalCompletedLastWeek} tasks this week, averaging {averageTasksPerDay} tasks per day.
+              {totalCompletedLastWeek > 35 ? ' Excellent consistency!' : ' Room for improvement in daily consistency.'}
+            </Typography>
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" color="primary" gutterBottom>
+              ⚡ Optimization Tip
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Your completion rate drops significantly after 18:00. 
+              Try to finish important tasks earlier in the day for better results.
+            </Typography>
+          </Box>
+          <Box sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" color="primary" gutterBottom>
+              📊 Task Balance
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              {taskStats && taskStats.inProgress > taskStats.planning * 2 
+                ? 'You have many tasks in progress. Consider focusing on completion before starting new ones.'
+                : 'Good balance between planning and execution. Keep up the momentum!'}
+            </Typography>
+          </Box>
+        </Box>
+      </Paper>
     </Box>
   );
 };

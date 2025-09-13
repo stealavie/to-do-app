@@ -40,6 +40,7 @@ This API is organized into the following sections. Please refer to the individua
 - [Learning Groups Management](./API_GUIDE_GROUPS.md)
 - [Project Management](./API_GUIDE_PROJECTS.md)
 - [Tasks Management](./API_GUIDE_TASKS.md) - **NEW: Advanced task management with pagination and caching**
+- [Project Source](./API_GUIDE_PROJECT_SOURCE.md) - **NEW: Project source with new data models and backend services**
 - [Notifications](./API_GUIDE_NOTIFICATIONS.md)
 - [Real-time Communication (Socket.IO)](./API_GUIDE_SOCKETS.md)
 - [Gemini AI Assistant](./API_GUIDE_AI.md)

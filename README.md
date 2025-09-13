@@ -14,7 +14,8 @@
 3. Set up environment variables by copying the example file: `cp .env.example .env`
 4. Edit the `.env` file with your PostgreSQL database URL and a JWT secret.
 5. Apply database migrations: `npm run db:migrate`
-6. Start the development server: `npm run dev`
+6. (Optional) Seed database: `npm run db:seed`
+7. Start the development server: `npm run dev`
 
 **Frontend**
 1. Navigate to the `frontend` directory: `cd frontend`
@@ -40,6 +41,8 @@
 - **User Authentication**: Secure user registration and login system using JWT.
 - **Group Management**: Users can create new learning groups, which generates a unique invite code. Other users can join existing groups using this code.
 - **Project Collaboration**: Within groups, members can create and manage shared projects, including setting names, descriptions, and deadlines.
+- **Advanced Task Management**: The platform now includes advanced features for managing tasks, such as setting priority and status, with enhanced UI components for a better user experience.
+- **Smart Notifications**: A new engine that analyzes user behavior and deadlines to send intelligent reminders, helping users stay on track.
 - **Real-time Updates**: The interface uses modern data fetching strategies to ensure that all information is kept up-to-date across clients, providing a seamless collaborative experience.
 
 ## 🛠 Technology Stack and Implementation Methods
