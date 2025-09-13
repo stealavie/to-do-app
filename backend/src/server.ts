@@ -36,7 +36,10 @@ if (process.env.FRONTEND_URL) {
 }
 
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin: (
+    origin: string | undefined, 
+    callback: (err: Error | null, allow?: boolean) => void
+  ) => {
     // Allow requests with no origin (e.g., mobile apps, curl) and from whitelisted domains
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
@@ -46,7 +49,6 @@ const corsOptions = {
   },
   credentials: true
 };
-
 // --- Middleware Setup ---
 
 // Security middleware
