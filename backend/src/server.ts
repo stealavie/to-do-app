@@ -13,6 +13,7 @@ import projectRoutes from './routes/projects';
 import tasksRoutes from './routes/tasks';
 import notificationRoutes from './routes/notifications';
 import chatRoutes from './routes/chat';
+import analyticsRoutes from './routes/analytics';
 import { errorHandler, notFound } from './middleware/error';
 import { initializeSocket } from './services/socketService';
 
@@ -61,6 +62,7 @@ app.use('/api/groups', groupRoutes);
 app.use('/api/tasks', tasksRoutes);
 app.use('/api/notifications', notificationRoutes);
 app.use('/api/chat', chatRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 // Projects routes are nested under groups - using param merging
 app.use('/api/groups/:groupId/projects', projectRoutes);
