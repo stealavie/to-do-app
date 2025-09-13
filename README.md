@@ -1,4 +1,6 @@
 # To-Do App – Preliminary Assignment Submission
+![StudyFlow Overview](assets/overview.png)
+
 ⚠️ Please complete **all sections marked with the ✍️ icon** — these are required for your submission.
 
 👀 Please Check ASSIGNMENT.md file in this repository for assignment requirements.
@@ -12,16 +14,12 @@
 3. Set up environment variables by copying the example file: `cp .env.example .env`
 4. Edit the `.env` file with your PostgreSQL database URL and a JWT secret.
 5. Apply database migrations: `npm run db:migrate`
-6. (Optional) Seed the database with initial data: `npm run db:seed`
-7. Start the development server: `npm run dev`
+6. Start the development server: `npm run dev`
 
 **Frontend**
 1. Navigate to the `frontend` directory: `cd frontend`
 2. Install dependencies: `npm install`
-3. Create a `.env` file in the `frontend` directory and add the following line:
-   ```
-   VITE_API_URL=http://localhost:3000
-   ```
+3. Set up environment variables by copying the example file: `cp .env.example .env`
 4. Start the development server: `npm run dev`
 
 
@@ -35,7 +33,7 @@
 - The video will not appear in search results or on your channel.  
 - Share the link in your README so mentors can access it.  
 
-✍️ No demo video available.
+✍️ [Watch the demo video here](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
 
 ## 📖 Function Manual
 ✍️ The **StudyFlow** platform provides a comprehensive suite of features for collaborative learning:

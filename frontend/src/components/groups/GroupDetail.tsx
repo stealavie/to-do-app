@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Plus, Settings, Copy, Calendar, BookOpen, Filter, User, Inbox, BarChart3 } from 'lucide-react';
+import { ArrowLeft, Plus, Copy, Calendar, BookOpen, Filter, User, Inbox, BarChart3 } from 'lucide-react';
 import { groupsApi } from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/Button';
@@ -33,7 +33,7 @@ export const GroupDetail: React.FC = () => {
   const group: LearningGroup | undefined = groupData?.group;
   const userMembership = group?.memberships?.find(m => m.user.id === user?.id);
   const userRole: Role = userMembership?.role || 'MEMBER';
-  const canManageGroup = userRole === 'OWNER' || userRole === 'ADMIN';
+  // const canManageGroup = userRole === 'OWNER' || userRole === 'ADMIN';
   // Allow all group members to edit tasks, not just owners/admins
   const canEditTasks = !!userMembership; // Any member can edit tasks
 
@@ -177,12 +177,12 @@ export const GroupDetail: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-2xl font-bold text-secondary-900">Projects</h2>
             <div className="flex space-x-3">
-              {canManageGroup && (
+              {/* {canManageGroup && (
                 <Button variant="secondary" size="sm">
                   <Settings className="w-4 h-4 mr-2" />
                   Manage Group
                 </Button>
-              )}
+              )} */}
               <Button onClick={() => setShowCreateProjectModal(true)} size="sm">
                 <Plus className="w-4 h-4 mr-2" />
                 New Project

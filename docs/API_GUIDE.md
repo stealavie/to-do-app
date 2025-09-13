@@ -39,6 +39,7 @@ This API is organized into the following sections. Please refer to the individua
 - [Authentication Endpoints](./API_GUIDE_AUTH.md)
 - [Learning Groups Management](./API_GUIDE_GROUPS.md)
 - [Project Management](./API_GUIDE_PROJECTS.md)
+- [Tasks Management](./API_GUIDE_TASKS.md) - **NEW: Advanced task management with pagination and caching**
 - [Notifications](./API_GUIDE_NOTIFICATIONS.md)
 - [Real-time Communication (Socket.IO)](./API_GUIDE_SOCKETS.md)
 - [Gemini AI Assistant](./API_GUIDE_AI.md)
