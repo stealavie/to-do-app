@@ -10,7 +10,6 @@ import { SocketProvider } from './contexts/SocketContext';
 import { ChatProvider } from './contexts/ChatContext';
 import { muiTheme } from './theme/mui-theme';
 import { Header } from './components/layout/Header';
-import SmartTodoNavigation from './components/layout/SmartTodoNavigation';
 import { Dashboard } from './components/Dashboard';
 import { Login } from './components/auth/Login';
 import { Register } from './components/auth/Register';
@@ -57,8 +56,7 @@ const AppContent: React.FC = () => {
     <Router>
       <div className="min-h-screen bg-gradient-to-br from-secondary-50 via-white to-primary-50">
         <Header />
-        {isAuthenticated && <SmartTodoNavigation />}
-        <main className="container mx-auto px-6 py-10">
+        <main className="container mx-auto px-6 py-8">
           <Routes>
             <Route
               path="/"
