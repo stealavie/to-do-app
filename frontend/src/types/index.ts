@@ -164,3 +164,31 @@ export interface ChatMessageResponse {
   message: string;
   timestamp: string;
 }
+
+// Tasks API Types
+export interface TasksResponse {
+  tasks: Project[];
+  pagination: {
+    currentPage: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+export interface TasksQueryParams {
+  status?: string | string[];
+  page?: number;
+  pageSize?: number;
+  priority?: 'LOW' | 'MEDIUM' | 'HIGH';
+  groupId?: string;
+}
+
+export interface TaskStats {
+  planning: number;
+  inProgress: number;
+  done: number;
+  total: number;
+}

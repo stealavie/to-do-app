@@ -9,6 +9,8 @@ import type {
   JoinGroupRequest,
   CreateProjectRequest,
   ChatMessageResponse,
+  TasksResponse,
+  TaskStats,
 } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
@@ -186,6 +188,36 @@ export const chatApi = {
       message,
       apiKey
     });
+    return response.data;
+  },
+};
+
+// Tasks API
+export const tasksApi = {
+  async getTasks(params: {
+    status?: string | string[];
+    page?: number;
+    pageSize?: number;
+    priority?: 'LOW' | 'MEDIUM' | 'HIGH';
+    groupId?: string;
+  } = {}): Promise<TasksResponse> {
+    const queryParams = new URLSearchParams();
+    
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.pageSize) queryParams.append('pageSize', params.pageSize.toString());
+    if (params.status) {
+      const statuses = Array.isArray(params.status) ? params.status : [params.status];
+      statuses.forEach(status => queryParams.append('status', status));
+    }
+    if (params.priority) queryParams.append('priority', params.priority);
+    if (params.groupId) queryParams.append('groupId', params.groupId);
+    
+    const response = await api.get(`/api/tasks?${queryParams.toString()}`);
+    return response.data;
+  },
+
+  async getTaskStats(): Promise<TaskStats> {
+    const response = await api.get('/api/tasks/stats');
     return response.data;
   },
 };
