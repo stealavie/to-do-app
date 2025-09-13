@@ -21,6 +21,7 @@ model User {
   assignedProjects Project[]
   lastEditedProjects Project[] @relation("ProjectLastEditor")
   notifications    Notification[]
+  taskHistory      TaskHistory[]
 }
 
 model LearningGroup {
@@ -78,6 +79,9 @@ model Notification {
   message   String
   isRead    Boolean  @default(false) @map("is_read")
   createdAt DateTime @default(now()) @map("created_at")
+  
+  // Smart notification type for tracking different alert types
+  alertType String @default("standard") @map("alert_type") // 'standard', 'smart_start_reminder', 'deadline_critical'
 
   // Relations
   userId    String @map("user_id")
@@ -92,6 +96,25 @@ model Notification {
 
   @@index([userId, createdAt])
   @@index([userId, isRead])
+  @@index([projectId, alertType])
+}
+
+// Task history model for tracking project completion times and events
+model TaskHistory {
+  id        String   @id @default(cuid())
+  projectId String   @map("project_id")
+  eventType String   @map("event_type") // 'started', 'completed', 'status_changed'
+  actualTimeMinutes Int? @map("actual_time_minutes") // Time taken to complete (only for 'completed' events)
+  fromStatus String? @map("from_status") // Previous status for status change events
+  toStatus   String? @map("to_status")   // New status for status change events
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  // Relations
+  userId    String @map("user_id") // User who performed the action
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, eventType])
+  @@index([userId, createdAt])
 }
 
 enum Role {

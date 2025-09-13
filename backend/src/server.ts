@@ -16,6 +16,7 @@ import chatRoutes from './routes/chat';
 import analyticsRoutes from './routes/analytics';
 import { errorHandler, notFound } from './middleware/error';
 import { initializeSocket } from './services/socketService';
+import { notificationScheduler } from './services/notificationScheduler';
 
 // Load environment variables
 dotenv.config();
@@ -91,6 +92,10 @@ httpServer.listen(PORT, () => {
   console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`🔗 Health check: http://localhost:${PORT}/health`);
   console.log(`📡 Socket.IO enabled for real-time notifications`);
+  
+  // Start the Smart Notification Scheduler
+  notificationScheduler.start();
+  console.log(`⏰ Smart Notification Engine (Module 4) activated`);
 });
 
 export default app;

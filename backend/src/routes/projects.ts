@@ -546,13 +546,37 @@ router.put('/:projectId/status', authenticate, async (req: AuthenticatedRequest,
       });
     }
 
+    // Calculate actual time if completing a task that was IN_PROGRESS
+    let actualTimeMinutes: number | null = null;
+    
+    if (existingProject.status === 'IN_PROGRESS' && status === 'DONE') {
+      // Find when the task was last started (moved to IN_PROGRESS)
+      const startEvent = await prisma.taskHistory.findFirst({
+        where: {
+          projectId: projectId,
+          toStatus: 'IN_PROGRESS'
+        },
+        orderBy: {
+          createdAt: 'desc'
+        }
+      });
+
+      if (startEvent) {
+        const startTime = startEvent.createdAt;
+        const endTime = new Date();
+        actualTimeMinutes = Math.round((endTime.getTime() - startTime.getTime()) / (1000 * 60));
+      }
+    }
+
     // Update project status
     const updatedProject = await prisma.project.update({
       where: {
         id: projectId
       },
       data: {
-        status
+        status,
+        lastEditedBy: userId,
+        lastEditedAt: new Date()
       },
       include: {
         assignedUser: {
@@ -571,6 +595,18 @@ router.put('/:projectId/status', authenticate, async (req: AuthenticatedRequest,
       }
     });
 
+    // Log the status change in task history
+    await prisma.taskHistory.create({
+      data: {
+        projectId: projectId,
+        userId: userId,
+        eventType: status === 'DONE' ? 'completed' : 'status_changed',
+        actualTimeMinutes: actualTimeMinutes,
+        fromStatus: existingProject.status,
+        toStatus: status
+      }
+    });
+
     // Create notification for status change if project is assigned
     if (existingProject.assignedUser && status === 'DONE') {
       await prisma.notification.create({
@@ -581,11 +617,13 @@ router.put('/:projectId/status', authenticate, async (req: AuthenticatedRequest,
           message: `Project "${existingProject.title}" has been marked as completed`,
           projectId: projectId,
           groupId: groupId,
+          alertType: 'standard',
           metadata: {
             previousStatus: existingProject.status,
             newStatus: status,
             projectTitle: existingProject.title,
-            groupName: existingProject.group.name
+            groupName: existingProject.group.name,
+            actualTimeMinutes: actualTimeMinutes
           }
         }
       });
